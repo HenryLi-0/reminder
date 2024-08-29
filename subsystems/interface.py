@@ -35,16 +35,6 @@ class Interface:
             -997 : [" ", DummyVisualObject("dummy", (0,0))], # used by keybinds
             -996 : [" ", DummyVisualObject("dummy", (0,0))], # used by scrolling
 
-            # Example Usage
-            -99 : ["a", OrbVisualObject("example", (145,165))],
-            -98 : ["a", ButtonVisualObject("Example Button", (200,150), PLACEHOLDER_IMAGE_5_ARRAY, PLACEHOLDER_IMAGE_3_ARRAY)],
-            -97 : ["a", EditableTextBoxVisualObject("Example Textbox", (20,150), "Textbox", False)],
-            -96 : ["a", IconVisualObject("Example Icon", (20,195), ICON_CONSOLE_ARRAY, (33,33))],
-            -95 : ["a", ToggleVisualObject("Example Toggle", (20,245), ICON_CONSOLE_ARRAY, ICON_CONSOLE_ARRAY, (33,33), lambda: print("on"), lambda: print("off"))],
-            -94 : ["a", HorizontalSliderVisualObject("Example Horizontal Slider", (50,300), 100, [0,100])],
-            -93 : ["a", VerticalSliderVisualObject("Example Vertical Slider", (20,330), 100, [0,100])],
-            -92 : ["a", CheckboxVisualObject("Example Checkbox", (80,360), (33,33), True)],
-            -91 : ["a", TextButtonPushVisualObject("Example Text Button", "Some Button", (20,475))],
         }
         '''Control'''
         self.interacting = -999
@@ -74,7 +64,11 @@ class Interface:
         self.deltaTicks = 1 if self.fps==0 else round(INTERFACE_FPS/self.fps)
         self.ticks += self.deltaTicks
         
-        self.mouseInPopUpSection = self.mouseInSection("a")
+        self.mouseInCalanderSection = self.mouseInSection("c")
+        self.mouseInPopupSection    = self.mouseInSection("p")
+        self.mouseInReminderSection = self.mouseInSection("r")
+        self.mouseInDateSection     = self.mouseInSection("d")
+        self.mouseInTimerSection    = self.mouseInSection("t")
 
         '''Keyboard'''
         for key in keyQueue: 
@@ -136,11 +130,76 @@ class Interface:
                 else:
                     self.ivos[self.previousInteracting][1].updateText(self.stringKeyQueue)
 
-    def processExampleA(self, im):
-        '''Example A Area: `(  22,  22) to ( 671, 675)` : size `( 650, 654)`'''
+    def processCalander(self, im):
+        '''Calander Area: `(  14,  14) to ( 463, 683)` : size `( 450, 670)`'''
         img = im.copy()
-        rmx = self.mx - 22
-        rmy = self.my - 22
+        rmx = self.mx - 14
+        rmy = self.my - 14
+
+        for id in self.ivos:
+            if self.ivos[id][0] == "c":
+                self.ivos[id][1].tick(img, self.interacting==id)
+
+        return img    
+    
+    def processPopup(self, im):
+        '''Popup Area:    `( 240,  14) to ( 463, 213)` : size `( 224, 200)`'''
+        img = im.copy()
+        rmx = self.mx - 240
+        rmy = self.my - 14
+
+
+        for id in self.ivos:
+            if self.ivos[id][0] == "p":
+                self.ivos[id][1].tick(img, self.interacting==id)
+
+        return img    
+
+    def processReminder(self, im):
+        '''Reminder Area: `( 478,  14) to ( 927, 683)` : size `( 450, 670)`'''
+        img = im.copy()
+        rmx = self.mx - 478
+        rmy = self.my - 14
+
+        for id in self.ivos:
+            if self.ivos[id][0] == "r":
+                self.ivos[id][1].tick(img, self.interacting==id)
+
+        return img    
+
+    def processDate(self, im):
+        '''Date Area:     `( 942,  14) to (1351, 341)` : size `( 410, 328)`'''
+        img = im.copy()
+        rmx = self.mx - 942
+        rmy = self.my - 14
+
+        temp = FORMATING_NOW("%m-%Y")
+        placeOver(img, displayText(f"{temp}", "m"), (20,25))
+
+
+        delta = -(7+int(FORMATING_NOW("%d"))-((int(FORMATING_NOW("%d"))-["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].index(FORMATING_NOW("%A"))))%7)*86400
+        days = [FORMATING_DELTA("%d", delta+i*86400) for i in range(35)]
+        months = [FORMATING_DELTA("%m", delta+i*86400) for i in range(35)]
+        currentMonth = FORMATING_NOW("%m")
+        currentDay = FORMATING_NOW("%d")
+
+        for i in range(7):
+            placeOver(img, displayText("SMTWTFS"[i], "m"), (i*55+25, 75))
+
+        for i in range(35):
+            placeOver(img, displayText(str(days[i]), "m", colorTXT=((255,255,255,255) if days[i] == currentDay else (175,175,175,255)) if months[i] == currentMonth else (100,100,100,255)), (i%7*55+25, i//7*40+115))
+
+        for id in self.ivos:
+            if self.ivos[id][0] == "d":
+                self.ivos[id][1].tick(img, self.interacting==id)
+
+        return img    
+
+    def processTimer(self, im):
+        '''Timer Area:    `( 942, 356) to (1351, 683)` : size `( 410, 328)`'''
+        img = im.copy()
+        rmx = self.mx - 942
+        rmy = self.my - 356
 
         placeOver(img, displayText(f"FPS: {self.fps}", "m"), (20,20))
         placeOver(img, displayText(f"Interacting With: {self.interacting}", "m"), (20,55))
@@ -149,24 +208,7 @@ class Interface:
         placeOver(img, displayText(f"Mouse Press: {self.mPressed}", "m", colorTXT=(100,255,100,255) if self.mPressed else (255,100,100,255)), (200,55))
 
         for id in self.ivos:
-            if self.ivos[id][0] == "a":
-                self.ivos[id][1].tick(img, self.interacting==id)
-
-        return img    
-    
-    def processExampleB(self, im):
-        '''Example B Area: `( 694,  22) to (1343, 675)` : size `( 650, 654)`'''
-        img = im.copy()
-        rmx = self.mx - 694
-        rmy = self.my - 22
-
-        choice = POINT_IDLE_ARRAY if random.random() > 0.5 else POINT_SELECTED_ARRAY
-        for i in range(25):
-            placeOver(img, choice, (math.cos((self.ticks/5+i/25))*250 + 325, math.sin((self.ticks/5+i/25))*250 + 327))
-            placeOver(img, choice, (math.cos((self.ticks/2+i/25))*100 + 325, math.sin((self.ticks/2+i/25))*100 + 327))
-
-        for id in self.ivos:
-            if self.ivos[id][0] == "b":
+            if self.ivos[id][0] == "t":
                 self.ivos[id][1].tick(img, self.interacting==id)
 
         return img    

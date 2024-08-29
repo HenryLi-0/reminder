@@ -38,7 +38,8 @@ import os, time
 PATH_SAVE_DEFAULT = os.path.join("saves")
 
 FORMAT_TIME = lambda x: time.strftime("%I:%M:%S %p %m/%d/%Y", time.localtime(x))
-
+FORMATING_NOW = lambda f: time.strftime(f, time.localtime(time.time()))
+FORMATING_DELTA = lambda f,t: time.strftime(f, time.localtime(time.time()+t))
 
 '''Keybinds'''
 KB_IGNORE    = ["Win_L"]                                                                     # Keys to ignore
