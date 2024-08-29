@@ -57,20 +57,29 @@ VERSION = "v0.0.0"
 
 # Sections
 '''
-- Example A Area: `(  22,  22) to ( 671, 675)` : size `( 650, 654)`
-- Example B Area: `( 694,  22) to (1343, 675)` : size `( 650, 654)`
+- Calander Area: `(  14,  14) to ( 463, 683)` : size `( 450, 670)`
+- Popup Area:    `( 240,  14) to ( 463, 213)` : size `( 224, 200)`
+- Reminder Area: `( 478,  14) to ( 927, 683)` : size `( 450, 670)`
+- Date Area:     `( 942,  14) to (1351, 341)` : size `( 410, 328)`
+- Timer Area:    `( 942, 356) to (1351, 683)` : size `( 410, 328)`
 
 Region ID : Top Left, Bottom Right, Size, Keep In Relative Top Left, Keep In Relative Top Right
 '''
 SECTIONS_DATA = {
     " ": [(   0,   0),(   0,   0),(   0,   0),(   0,   0),(   0,   0)],
-    "a": [(  22,  22),( 671, 675),( 650, 654),(   0,   0),( 650, 654)],
-    "b": [( 694,  22),(1343, 675),( 650, 654),(   0,   0),( 650, 654)],
+    "c": [(  14,  14),( 463, 683),( 450, 670),(   0,   0),( 450, 670)],
+    "p": [( 240,  14),( 463, 213),( 224, 200),(   0,   0),( 224, 200)],
+    "r": [( 478,  14),( 927, 683),( 450, 670),(   0,   0),( 450, 670)],
+    "d": [( 942,  14),(1351, 341),( 410, 328),(   0,   0),( 410, 328)],
+    "t": [( 942, 356),(1351, 683),( 410, 328),(   0,   0),( 410, 328)],
 }
 SECTIONS_FRAME_INSTRUCTIONS = {
     " ": [],
-    "a": genereateThemedBorderRectangleInstructions(( 650, 654),hexColorToRGBA(FRAME_COLOR)),
-    "b": genereateThemedBorderRectangleInstructions(( 650, 654),hexColorToRGBA(FRAME_COLOR)),
+    "c": genereateThemedBorderRectangleInstructions(( 450, 670),hexColorToRGBA(FRAME_COLOR)),
+    "p": genereateThemedBorderRectangleInstructions(( 224, 200),hexColorToRGBA(FRAME_COLOR)),
+    "r": genereateThemedBorderRectangleInstructions(( 450, 670),hexColorToRGBA(FRAME_COLOR)),
+    "d": genereateThemedBorderRectangleInstructions(( 410, 328),hexColorToRGBA(FRAME_COLOR)),
+    "t": genereateThemedBorderRectangleInstructions(( 410, 328),hexColorToRGBA(FRAME_COLOR)),
 }
 SECTIONS = list(SECTIONS_DATA.keys())
 

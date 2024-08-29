@@ -37,8 +37,11 @@ class Window:
         self.interface = Interface()
 
         self.processFunctions = {
-            "a" : self.interface.processExampleA,
-            "b" : self.interface.processExampleB,
+            "c" : self.interface.processExampleA,
+            "p" : self.interface.processExampleB,
+            "r" : self.interface.processExampleA,
+            "d" : self.interface.processExampleB,
+            "t" : self.interface.processExampleA,
         }
         self.processFunctionsRegions = list(self.processFunctions.keys())
 
