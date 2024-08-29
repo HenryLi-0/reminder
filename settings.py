@@ -22,15 +22,15 @@ SHOW_CROSSHAIR = False # Shows a crosshair for the mouse's position
 
 hexColorToRGBA = lambda hexcolor: tuple(int(hexcolor[i:i+2], 16) for i in (1, 3, 5)) + (255,)
 
-BACKGROUND_COLOR = "#333247" #Background color
-FRAME_COLOR      = "#524f6b" #Borders and Frame color
-SELECTED_COLOR   = "#bebcd5" #Selected Element color
-VOID_COLOR       = "#84829b" #Void color
+BACKGROUND_COLOR = "#303030" #Background color
+FRAME_COLOR      = "#9b9b9b" #Borders and Frame color
+SELECTED_COLOR   = "#696969" #Selected Element color
+FILL_COLOR       = "#eeeeee" #Fill color
 
 BACKGROUND_COLOR_RGBA = hexColorToRGBA(BACKGROUND_COLOR)
 FRAME_COLOR_RGBA      = hexColorToRGBA(FRAME_COLOR     )
 SELECTED_COLOR_RGBA   = hexColorToRGBA(SELECTED_COLOR  )
-VOID_COLOR_RGBA       = hexColorToRGBA(VOID_COLOR      )
+FILL_COLOR_RGBA       = hexColorToRGBA(FILL_COLOR      )
 
 
 '''Saving'''
@@ -38,8 +38,9 @@ import os, time
 PATH_SAVE_DEFAULT = os.path.join("saves")
 
 FORMAT_TIME = lambda x: time.strftime("%I:%M:%S %p %m/%d/%Y", time.localtime(x))
-FORMATING_NOW = lambda f: time.strftime(f, time.localtime(time.time()))
-FORMATING_DELTA = lambda f,t: time.strftime(f, time.localtime(time.time()+t))
+FORMAT_NOW = lambda f: time.strftime(f, time.localtime(time.time()))
+FORMAT_DELTA = lambda f,t: time.strftime(f, time.localtime(time.time()+t))
+FORMAT_TIME_FANCY = lambda x: time.strftime("%m-%d-%Y - %I:%M:%S %p", time.localtime(x))
 
 '''Keybinds'''
 KB_IGNORE    = ["Win_L"]                                                                     # Keys to ignore
@@ -67,7 +68,6 @@ VERSION = "v0.0.0"
 Region ID : Top Left, Bottom Right, Size, Keep In Relative Top Left, Keep In Relative Top Right
 '''
 SECTIONS_DATA = {
-    " ": [(   0,   0),(   0,   0),(   0,   0),(   0,   0),(   0,   0)],
     "c": [(  14,  14),( 463, 683),( 450, 670),(   0,   0),( 450, 670)],
     "p": [( 240,  14),( 463, 213),( 224, 200),(   0,   0),( 224, 200)],
     "r": [( 478,  14),( 927, 683),( 450, 670),(   0,   0),( 450, 670)],
@@ -75,7 +75,6 @@ SECTIONS_DATA = {
     "t": [( 942, 356),(1351, 683),( 410, 328),(   0,   0),( 410, 328)],
 }
 SECTIONS_FRAME_INSTRUCTIONS = {
-    " ": [],
     "c": genereateThemedBorderRectangleInstructions(( 450, 670),hexColorToRGBA(FRAME_COLOR)),
     "p": genereateThemedBorderRectangleInstructions(( 224, 200),hexColorToRGBA(FRAME_COLOR)),
     "r": genereateThemedBorderRectangleInstructions(( 450, 670),hexColorToRGBA(FRAME_COLOR)),

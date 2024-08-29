@@ -5,7 +5,7 @@ import numpy
 from settings import FONT_SMALL, FONT_SMALL_MEDIUM, FONT_MEDIUM, FONT_LARGE, BACKGROUND_COLOR, SELECTED_COLOR, FRAME_COLOR, hexColorToRGBA
 from subsystems.simplefancy import *
 
-def displayText(text: str, size, colorBG:tuple|list = (0,0,0,0), colorTXT:tuple|list = (255,255,255,255), bold = False):
+def displayText(text: str, size, colorBG:tuple|list = (0,0,0,0), colorTXT:tuple|list = (0,0,0,255), bold = False):
     '''Returns a numpy array for text, give the text (str), size (s, m, or l for small, medium, large, respectively), and optional background and text color given as (r,g,b,a)'''
     if size == "s":
         font = FONT_SMALL

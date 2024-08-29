@@ -47,6 +47,12 @@ class Interface:
         '''Sliders'''
         self.sliders = []
         self.slidersData = []
+        '''Data'''
+        self.now = time.time()
+        self.reminders = {
+            "Reminders": [["among us sus",1985],["aaaaa",17179869184]]
+        }
+        self.selectedRemindersList = list(self.reminders.keys())[0]
         pass
 
     def mouseInSection(self, section):
@@ -63,6 +69,8 @@ class Interface:
         self.fps = fps
         self.deltaTicks = 1 if self.fps==0 else round(INTERFACE_FPS/self.fps)
         self.ticks += self.deltaTicks
+
+        self.now = time.time()
         
         self.mouseInCalanderSection = self.mouseInSection("c")
         self.mouseInPopupSection    = self.mouseInSection("p")
@@ -136,6 +144,7 @@ class Interface:
         rmx = self.mx - 14
         rmy = self.my - 14
 
+        
         for id in self.ivos:
             if self.ivos[id][0] == "c":
                 self.ivos[id][1].tick(img, self.interacting==id)
@@ -161,6 +170,17 @@ class Interface:
         rmx = self.mx - 478
         rmy = self.my - 14
 
+        placeOver(img, displayText("Reminders:", "m"), (20,20))
+
+        selectedList = self.reminders[self.selectedRemindersList]
+
+        i=0
+        for reminder in selectedList:
+            placeOver(img, displayText(reminder[0], "m"), (60, i*73+60))
+            placeOver(img, displayText(FORMAT_TIME_FANCY(reminder[1]), "m", colorTXT=(100,100,100,255) if reminder[1] >= self.now else (255,100,100,255)), (60, i*73+82))
+            i+=1
+
+
         for id in self.ivos:
             if self.ivos[id][0] == "r":
                 self.ivos[id][1].tick(img, self.interacting==id)
@@ -173,21 +193,21 @@ class Interface:
         rmx = self.mx - 942
         rmy = self.my - 14
 
-        temp = FORMATING_NOW("%m-%Y")
+        temp = FORMAT_NOW("%m-%Y")
         placeOver(img, displayText(f"{temp}", "m"), (20,25))
 
 
-        delta = -(7+int(FORMATING_NOW("%d"))-((int(FORMATING_NOW("%d"))-["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].index(FORMATING_NOW("%A"))))%7)*86400
-        days = [FORMATING_DELTA("%d", delta+i*86400) for i in range(35)]
-        months = [FORMATING_DELTA("%m", delta+i*86400) for i in range(35)]
-        currentMonth = FORMATING_NOW("%m")
-        currentDay = FORMATING_NOW("%d")
+        delta = -(7+int(FORMAT_NOW("%d"))-((int(FORMAT_NOW("%d"))-["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].index(FORMAT_NOW("%A"))))%7)*86400
+        days = [FORMAT_DELTA("%d", delta+i*86400) for i in range(35)]
+        months = [FORMAT_DELTA("%m", delta+i*86400) for i in range(35)]
+        currentMonth = FORMAT_NOW("%m")
+        currentDay = FORMAT_NOW("%d")
 
         for i in range(7):
             placeOver(img, displayText("SMTWTFS"[i], "m"), (i*55+25, 75))
 
         for i in range(35):
-            placeOver(img, displayText(str(days[i]), "m", colorTXT=((255,255,255,255) if days[i] == currentDay else (175,175,175,255)) if months[i] == currentMonth else (100,100,100,255)), (i%7*55+25, i//7*40+115))
+            placeOver(img, displayText(str(days[i]), "m", colorTXT=((0,0,0,255) if days[i] == currentDay else (150,150,150,255)) if months[i] == currentMonth else (200,200,200,255)), (i%7*55+25, i//7*40+115))
 
         for id in self.ivos:
             if self.ivos[id][0] == "d":

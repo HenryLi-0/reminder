@@ -14,7 +14,7 @@ class Window:
         '''initalize tk window'''
         self.window = tk.Tk()
         self.window.grid()
-        self.window.title("Interactable Visual Objects!")
+        self.window.title("Reminders")
         self.window.geometry("1366x698")
         # self.window.minsize(500,500)
         # self.window.maxsize(500,500)
@@ -30,7 +30,7 @@ class Window:
         self.labels = {}
         self.blankLabels = {}
         for section in SECTIONS:
-            self.labels[section] = LabelWrapper(self.window, SECTIONS_DATA[section][2], SECTIONS_DATA[section][0], SECTIONS_DATA[section][0], BACKGROUND_COLOR, SECTIONS_FRAME_INSTRUCTIONS[section])
+            self.labels[section] = LabelWrapper(self.window, SECTIONS_DATA[section][2], SECTIONS_DATA[section][0], SECTIONS_DATA[section][0], FILL_COLOR, SECTIONS_FRAME_INSTRUCTIONS[section])
             self.blankLabels[section] = self.labels[section].getBlank() 
 
         '''start interface'''
@@ -40,7 +40,7 @@ class Window:
             "c" : self.interface.processCalander,
             "p" : self.interface.processPopup   ,
             "r" : self.interface.processReminder,
-            "d" : self.interface.processDate    ,
+            # "d" : self.interface.processDate    ,
             "t" : self.interface.processTimer   ,
         }
         self.processFunctionsRegions = list(self.processFunctions.keys())
@@ -71,8 +71,9 @@ class Window:
     def windowOccasionalProcesses(self):
         '''window processes that happen less frequently (once every 5 seconds)'''
         print("windowOccaionalProcess")
-        self.window.title(f"Interactable Visual Objects {self.interface.ticks}")
+        self.window.title(f"Reminders")
         print(self.getFPS())
+        self.labels["d"].update(arrayToImage(self.interface.processDate(self.blankLabels["d"])))
         self.window.after(OCCASIONAL_TICK_MS, self.windowOccasionalProcesses)
 
     def windowStartupProcesses(self):
