@@ -112,8 +112,9 @@ class Interface:
                     self.reminders.pop(editing)
                     self.reminders[self.ivos[self.temporaryInteracting][1].txt] = temp
                     self.selectedRemindersList = self.ivos[self.temporaryInteracting][1].txt
-                self.ivos.pop(self.temporaryInteracting)
-                self.temporaryInteracting = -999  
+                if not self.temporaryInteracting in SYS_IVOS:
+                    self.ivos.pop(self.temporaryInteracting)
+                self.temporaryInteracting = -999
 
         '''Keyboard'''
         for key in keyQueue:
@@ -136,9 +137,39 @@ class Interface:
                         break
         self.previousKeyQueue = keyQueue.copy()
         if (self.interacting == -999 or self.interacting == -997) and (time.time() - self.keybindLastUpdate > 0.2):
-            if KB_EXAMPLE(keyQueue):
-                '''EXAMPLE KEYBIND: CTRL + SPACE'''
-                print("example keybind")
+            if KB_DEL_REMINDER(keyQueue):
+                '''DELETE REMINDER BELOW MOUSE: SHIFT + BACKSPACE'''
+                if self.mouseInReminderSection and 55 < (self.my-14) and (self.my-14) < 640:
+                    if len(self.reminders[self.selectedRemindersList]) > 1:
+                        i = ((self.my-14)+self.reminderScrollOffset-80)//73
+                        if 0 <= i and i <= len(self.reminders[self.selectedRemindersList])-1:
+                            self.keybindLastUpdate = time.time()
+                            self.reminders[self.selectedRemindersList].pop(i)
+                            self.interacting = -997
+            if KB_DEL_LIST(keyQueue):
+                '''DELETE CURRENT REMINDERS LIST: ALT + SHIFT + BACKSPACE'''
+                if self.mouseInReminderSection and 640 < (self.my-14):
+                    if len(self.reminders.keys()) > 1:
+                        i = ((self.mx-478)+self.reminderTabScrollOffset-10)//100
+                        if 0 <= i and i <= len(self.reminders.keys())-1:
+                            self.keybindLastUpdate = time.time()
+                            self.reminders.pop(list(self.reminders.keys())[i])
+                            self.selectedRemindersList = list(self.reminders.keys())[i-1]
+                            self.interacting = -997
+            if KB_NEW_REMINDER(keyQueue):
+                '''CREATES A NEW REMINDER: ALT + N'''
+                if self.mouseInReminderSection and 55 < (self.my-14) and (self.my-14) < 640:
+                    self.keybindLastUpdate = time.time()
+                    self.reminders[self.selectedRemindersList].append(["New Reminder", (time.time()//86400)*86400 + 86400, False])
+                    self.interacting = -997
+            if KB_NEW_LIST(keyQueue):
+                '''CREATES A NEW LIST: ALT + N'''
+                if 640 <= (self.my-14):
+                    self.keybindLastUpdate = time.time()
+                    self.reminders[f"New List {len(self.reminders.keys())}"] = [["New Reminder", (time.time()//86400)*86400 + 86400, False]]
+                    self.interacting = -997
+
+
 
         '''Mouse Scroll'''
         self.mouseScroll = mouseScroll
@@ -186,15 +217,17 @@ class Interface:
                         self.interacting = -997
             elif 640 < rmy:
                 i = (rmx+self.reminderTabScrollOffset-10)//100
-                if 0 <= i and i <= len(self.reminders.keys())-1 and list(self.reminders.keys())[i] != self.selectedRemindersList:
-                    self.selectedRemindersList = list(self.reminders.keys())[i]
-                    self.interacting = -997
-                if list(self.reminders.keys())[i] == self.selectedRemindersList:
-                    self.interacting = self.c.c()
-                    self.temporaryInteracting = self.interacting
-                    self.stringKeyQueue = self.selectedRemindersList
-                    self.ivos[self.interacting] = ["r", EditableTextBoxVisualObject(f"C{i}", (i*100+10-self.reminderTabScrollOffset, 645), self.stringKeyQueue)]
-
+                if 0 <= i and i <= len(self.reminders.keys())-1:
+                    if list(self.reminders.keys())[i] != self.selectedRemindersList:
+                        self.selectedRemindersList = list(self.reminders.keys())[i]
+                        self.interacting = -997
+                    elif list(self.reminders.keys())[i] == self.selectedRemindersList:
+                        self.interacting = self.c.c()
+                        self.temporaryInteracting = self.interacting
+                        self.stringKeyQueue = self.selectedRemindersList
+                        self.ivos[self.interacting] = ["r", EditableTextBoxVisualObject(f"C{i}", (i*100+10-self.reminderTabScrollOffset, 645), self.stringKeyQueue)]
+                elif len(self.reminders.keys())-1 < i:
+                    self.reminders[f"New List {len(self.reminders.keys())}"] = [["New Reminder", (time.time()//86400)*86400 + 86400, False]]
 
         '''Interacting With...'''
         self.previousInteracting = self.interacting
@@ -294,11 +327,11 @@ class Interface:
             if not(self.ivos[self.temporaryInteracting][1].name[0] == "C" and str(i) == str(self.ivos[self.temporaryInteracting][1].name[1:])):
                 if shift > -90:
                     if shift < 0:
-                        placeOver(img, getRegion(displayText(listname, "m"), (abs(shift)+3,0), (90,25)), (3,645))
+                        placeOver(img, getRegion(displayText(listname, "m", colorTXT=(0,0,0,255) if listname == self.selectedRemindersList else (100,100,100,255)), (abs(shift)+3,0), (90,25)), (3,645))
                     elif shift > 360:
-                        placeOver(img, getRegion(displayText(listname, "m"), (0,0), (90-(shift-360+4),25)), (shift,645))
+                        placeOver(img, getRegion(displayText(listname, "m", colorTXT=(0,0,0,255) if listname == self.selectedRemindersList else (100,100,100,255)), (0,0), (90-(shift-360+4),25)), (shift,645))
                     else:
-                        placeOver(img, getRegion(displayText(listname, "m"), (0,0), (90,25)), (shift,645))
+                        placeOver(img, getRegion(displayText(listname, "m", colorTXT=(0,0,0,255) if listname == self.selectedRemindersList else (100,100,100,255)), (0,0), (90,25)), (shift,645))
             i+=1
 
         for id in self.ivos:

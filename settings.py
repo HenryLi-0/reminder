@@ -43,8 +43,11 @@ FORMAT_DELTA = lambda f,t: time.strftime(f, time.localtime(time.time()+t))
 FORMAT_TIME_FANCY = lambda x: time.strftime("%m-%d-%Y - %I:%M:%S %p", time.localtime(x))
 
 '''Keybinds'''
-KB_IGNORE    = ["Win_L"]                                                                     # Keys to ignore
-KB_EXAMPLE   = lambda keys: (len(keys) == 2) and ("Control_L" in keys) and ("space" in keys) # Example Keybind
+KB_IGNORE       = ["Win_L"]                                                                                                 # Keys to ignore
+KB_DEL_REMINDER = lambda keys: (len(keys) == 2) and ("Shift_L" in keys) and ("BackSpace" in keys)                           # Deletes the reminder
+KB_DEL_LIST     = lambda keys: (len(keys) == 3) and (  "Alt_L" in keys) and ("Shift_L" in keys) and ("BackSpace" in keys)   # Deletes the entire list
+KB_NEW_REMINDER = lambda keys: (len(keys) == 2) and (  "Alt_L" in keys) and ("N" in keys or "n" in keys)                    # Creates a new reminder
+KB_NEW_LIST     = lambda keys: (len(keys) == 2) and (  "Alt_L" in keys) and ("N" in keys or "n" in keys)                    # Creates a new list
 
 
 '''Constants - DO NOT CHANGE!!!'''
@@ -56,6 +59,7 @@ from subsystems.simplefancy import *
 
 # Version
 VERSION = "v0.0.0"
+SYS_IVOS = [-999,-998,-997,-996]
 
 # Sections
 '''
