@@ -30,8 +30,9 @@ class Window:
         self.labels = {}
         self.blankLabels = {}
         for section in SECTIONS:
-            self.labels[section] = LabelWrapper(self.window, SECTIONS_DATA[section][2], SECTIONS_DATA[section][0], SECTIONS_DATA[section][0], FILL_COLOR, SECTIONS_FRAME_INSTRUCTIONS[section])
-            self.blankLabels[section] = self.labels[section].getBlank() 
+            if section != " ":
+                self.labels[section] = LabelWrapper(self.window, SECTIONS_DATA[section][2], SECTIONS_DATA[section][0], SECTIONS_DATA[section][0], FILL_COLOR, SECTIONS_FRAME_INSTRUCTIONS[section])
+                self.blankLabels[section] = self.labels[section].getBlank() 
 
         '''start interface'''
         self.interface = Interface()

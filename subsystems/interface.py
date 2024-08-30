@@ -47,6 +47,8 @@ class Interface:
         '''Sliders'''
         self.sliders = []
         self.slidersData = []
+        '''Visuals'''
+        self.reminderScrollOffset = 0
         '''Data'''
         self.now = time.time()
         self.reminders = {
@@ -103,10 +105,26 @@ class Interface:
         if abs(self.mouseScroll) > 0:
             if self.interacting == -999: self.interacting = -996
             if self.interacting == -996:
-                print("scrolling!")
+                '''Scrolling!'''
+                if self.mouseInReminderSection:
+                    self.reminderScrollOffset += self.mouseScroll/2
+                    self.reminderScrollOffset = max(0, min(self.reminderScrollOffset, (len(self.reminders[self.selectedRemindersList])-1)*73))
         else:
             if self.interacting == -996: self.interacting = -999
         pass
+
+        '''Mouse Pressed Activations'''
+        if self.mouseInReminderSection and self.mRising and self.interacting == -999:
+            rmx = self.mx - 478
+            rmy = self.my - 14
+            if 58 < rmy and rmy < len(self.reminders[self.selectedRemindersList])*73+80-self.reminderScrollOffset:
+                # Selected Reminder
+                pass
+            elif rmy > len(self.reminders[self.selectedRemindersList])*73+80-self.reminderScrollOffset:
+                # New Reminder
+                self.reminders[self.selectedRemindersList].append(["New Reminder", time.time() + 86400])
+            elif rmx <= 58:
+                pass
 
         '''Interacting With...'''
         self.previousInteracting = self.interacting
@@ -170,16 +188,20 @@ class Interface:
         rmx = self.mx - 478
         rmy = self.my - 14
 
-        placeOver(img, displayText("Reminders:", "m"), (20,20))
-
         selectedList = self.reminders[self.selectedRemindersList]
 
         i=0
         for reminder in selectedList:
-            placeOver(img, displayText(reminder[0], "m"), (60, i*73+60))
-            placeOver(img, displayText(FORMAT_TIME_FANCY(reminder[1]), "m", colorTXT=(100,100,100,255) if reminder[1] >= self.now else (255,100,100,255)), (60, i*73+82))
+            if i*73+60-self.reminderScrollOffset > 670:
+                break
+            if i*73+60-self.reminderScrollOffset > 0:
+                placeOver(img, displayText(reminder[0], "m"), (60, i*73+80-self.reminderScrollOffset))
+                placeOver(img, displayText(FORMAT_TIME_FANCY(reminder[1]), "m", colorTXT=(100,100,100,255) if reminder[1] >= self.now else (255,100,100,255)), (60, i*73+102-self.reminderScrollOffset))
             i+=1
 
+        placeOver(img, generateColorBox((444,55), FILL_COLOR_RGBA), (3,3))
+        placeOver(img, generateColorBox((300,2), FRAME_COLOR_RGBA), (76,56))
+        placeOver(img, displayText(f"Reminders > {self.selectedRemindersList}: {len(selectedList)}", "m"), (20,20))
 
         for id in self.ivos:
             if self.ivos[id][0] == "r":

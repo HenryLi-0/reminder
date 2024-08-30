@@ -3,7 +3,7 @@ import tkinter as tk
 import numpy
 from PIL import Image, ImageTk
 from subsystems.simplefancy import generateColorBox
-from settings import PLACEHOLDER_IMAGE, hexColorToRGBA
+from settings import *
 from subsystems.render import placeOver
 
 class LabelWrapper:
@@ -11,7 +11,7 @@ class LabelWrapper:
     def __init__(self, root, size, offset = (0,0), place = (0,0), bg = "#ffffff", instructions = None):
         self.offset = offset
         self.size = size
-        self.section = tk.Label(root, width=size[0], height=size[1], bg=bg, highlightthickness=0, bd=0, image = ImageTk.PhotoImage(PLACEHOLDER_IMAGE))
+        self.section = tk.Label(root, width=size[0], height=size[1], bg=BACKGROUND_COLOR, highlightthickness=0, bd=0, image = ImageTk.PhotoImage(PLACEHOLDER_IMAGE))
         self.section.pack()
         self.position = place
         self.shown = True

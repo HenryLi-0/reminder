@@ -61,6 +61,19 @@ def genereateThemedBorderRectangleInstructions(size:list|tuple = (25,25),borderC
     instructions.append([col, (0,0)])
     instructions.append([row, (0,size[1]-3)])
     instructions.append([col, (size[0]-3,0)])
+
+    delete = generateUnrestrictedColorBox((9,9), (-255,-255,-255,-255))
+    temp = [(7,4),(8,4),(6,5),(7,5),(8,5),(5,6),(6,6),(7,6),(8,6),(4,7),(5,7),(6,7),(7,7),(8,7),(4,8),(5,8),(6,8),(7,8),(8,8)]
+    for coord in temp: delete[coord] = (0,0,0,0)
+    for coord in [(0,size[1]-9), (size[0]-9,size[1]-9), (size[0]-9,0), (0,0)]:
+        delete = numpy.rot90(delete, k=1, axes=(0, 1))
+        instructions.append([delete, coord])
+    corner = generateColorBox((9,9), (0,0,0,0))
+    temp = [(6,0),(7,0),(8,0),(4,1),(5,1),(6,1),(7,1),(8,1),(3,2),(4,2),(5,2),(6,2),(7,2),(8,2),(2,3),(3,3),(4,3),(5,3),(6,3),(7,3),(8,3),(1,4),(2,4),(3,4),(4,4),(5,4),(6,4),(1,5),(2,5),(3,5),(4,5),(5,5),(0,6),(1,6),(2,6),(3,6),(4,6),(0,7),(1,7),(2,7),(3,7),(0,8),(1,8),(2,8),(3,8)]
+    for coord in temp: corner[coord] = borderColor
+    for coord in [(0,size[1]-9), (size[0]-9,size[1]-9), (size[0]-9,0), (0,0)]:
+        corner = numpy.rot90(corner, k=1, axes=(0, 1))
+        instructions.append([corner, coord])
     return instructions
 
 def genereateSpecificThemedBorderRectangleInstructions(section, borderColor:list|tuple = (255,255,255,255)):

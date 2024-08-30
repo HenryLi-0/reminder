@@ -68,6 +68,7 @@ VERSION = "v0.0.0"
 Region ID : Top Left, Bottom Right, Size, Keep In Relative Top Left, Keep In Relative Top Right
 '''
 SECTIONS_DATA = {
+    " ": [(   0,   0),(   0,   0),(   0,   0),(   0,   0),(   0,   0)],
     "c": [(  14,  14),( 463, 683),( 450, 670),(   0,   0),( 450, 670)],
     "p": [( 240,  14),( 463, 213),( 224, 200),(   0,   0),( 224, 200)],
     "r": [( 478,  14),( 927, 683),( 450, 670),(   0,   0),( 450, 670)],
@@ -75,6 +76,7 @@ SECTIONS_DATA = {
     "t": [( 942, 356),(1351, 683),( 410, 328),(   0,   0),( 410, 328)],
 }
 SECTIONS_FRAME_INSTRUCTIONS = {
+    " ": [],
     "c": genereateThemedBorderRectangleInstructions(( 450, 670),hexColorToRGBA(FRAME_COLOR)),
     "p": genereateThemedBorderRectangleInstructions(( 224, 200),hexColorToRGBA(FRAME_COLOR)),
     "r": genereateThemedBorderRectangleInstructions(( 450, 670),hexColorToRGBA(FRAME_COLOR)),
