@@ -121,6 +121,9 @@ ORB_IDLE_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "orb_idle.p
 ORB_SELECTED_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "orb_selected.png"))
 POINT_IDLE_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "point_idle.png"))
 POINT_SELECTED_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "point_selected.png"))
+CHECKLIST_NORMAL_ARRAY = generateOutlinedCircle(16, (230,230,230,255), FRAME_COLOR_RGBA)
+CHECKLIST_LATE_ARRAY = generateOutlinedCircle(16, (255,230,230,255), FRAME_COLOR_RGBA)
+CHECKLIST_COMPLETE_ARRAY = generateOutlinedCircle(16, (230,255,230,255), FRAME_COLOR_RGBA)
 
 # Icons
 ICON_CONSOLE_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "icon", "console.png"))

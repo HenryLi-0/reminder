@@ -76,6 +76,27 @@ def genereateThemedBorderRectangleInstructions(size:list|tuple = (25,25),borderC
         instructions.append([corner, coord])
     return instructions
 
-def genereateSpecificThemedBorderRectangleInstructions(section, borderColor:list|tuple = (255,255,255,255)):
+def generateSpecificThemedBorderRectangleInstructions(section, borderColor:list|tuple = (255,255,255,255)):
     '''Generates Instructions for a specific section's Themed Border Rectangle'''
     return None
+
+def generateCircle(radius, color):
+    '''Generates a circle paint brush with given radius (radius) and color (RGBA)'''
+    diameter = radius * 2
+    array = numpy.empty((diameter, diameter, 4), dtype=numpy.uint8)
+    center = radius
+    for y in range(diameter):
+        for x in range(diameter):
+            distance = numpy.sqrt((x-center)**2+(y-center)**2)
+            if distance <= radius:
+                array[y,x] = color
+            else:
+                array[y,x] = (0,0,0,0)
+    return array
+
+def generateOutlinedCircle(fullradius, innercolor, outercolor):
+    '''Generates an outlined circle, given the full radius, inner color, and outer color'''
+    from subsystems.render import placeOver
+    temp = generateCircle(fullradius, outercolor)
+    placeOver(temp, generateCircle(fullradius-3, innercolor), (3,3))
+    return temp

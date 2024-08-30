@@ -2,7 +2,6 @@
 
 from PIL import Image, ImageEnhance
 import numpy, math
-from settings import *
 
 # Convert
 
