@@ -125,10 +125,9 @@ class EditableTextBoxVisualObject:
         self.underlineIdle = generateColorBox((self.positionO.getBBOX()[0],3), FRAME_COLOR_RGBA)
         self.underlineActive = generateColorBox((self.positionO.getBBOX()[0],3), SELECTED_COLOR_RGBA)
     def tick(self, img, active):
-        temp = generateColorBox(addP(self.positionO.getBBOX(), (0,3)), FRAME_COLOR_RGBA if active else BACKGROUND_COLOR_RGBA)
-        placeOver(temp, self.underlineActive if active else self.underlineIdle, (0, self.positionO.getBBOX()[1]))
-        placeOver(img, temp, self.positionO.getPosition())
+        placeOver(img, generateColorBox(self.positionO.getBBOX(), (255,255,255,255) if active else FILL_COLOR_RGBA), self.positionO.getPosition())
         placeOver(img, self.txtImg, self.positionO.getPosition(), False)
+        placeOver(img, self.underlineActive if active else self.underlineIdle, addP(self.positionO.getPosition(), (0, self.positionO.getBBOX()[1]-3)))
     def updateText(self, txt):
         if self.txt!=str(txt):
             self.txt = str(txt)

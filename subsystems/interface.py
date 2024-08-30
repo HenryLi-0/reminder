@@ -39,6 +39,7 @@ class Interface:
         '''Control'''
         self.interacting = -999
         self.previousInteracting = -999
+        self.temporaryInteracting = -999
         self.stringKeyQueue = ""
         self.previousKeyQueue = []
         self.mouseScroll = 0 
@@ -52,7 +53,7 @@ class Interface:
         '''Data'''
         self.now = time.time()
         self.reminders = {
-            "Reminders": [["among us sus",1985],["aaaaa",17179869184]]
+            "Reminders": [["hmmmmm",1985],["aaaaa",17179869184]]
         }
         self.selectedRemindersList = list(self.reminders.keys())[0]
         pass
@@ -79,6 +80,17 @@ class Interface:
         self.mouseInReminderSection = self.mouseInSection("r")
         self.mouseInDateSection     = self.mouseInSection("d")
         self.mouseInTimerSection    = self.mouseInSection("t")
+
+        if not(self.temporaryInteracting in self.ivos):
+            self.temporaryInteracting = -999
+        else:
+            if self.ivos[self.temporaryInteracting][1].name[0] == "A":
+                self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1])][0] = self.ivos[self.temporaryInteracting][1].txt
+            if self.ivos[self.temporaryInteracting][1].name[0] == "B":
+                self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1])][1] = int(self.ivos[self.temporaryInteracting][1].txt)
+            if self.temporaryInteracting in self.ivos and self.interacting != self.temporaryInteracting:
+                self.ivos.pop(self.temporaryInteracting)
+                self.temporaryInteracting = -999      
 
         '''Keyboard'''
         for key in keyQueue: 
@@ -118,8 +130,15 @@ class Interface:
             rmx = self.mx - 478
             rmy = self.my - 14
             if 58 < rmy and rmy < len(self.reminders[self.selectedRemindersList])*73+80-self.reminderScrollOffset:
-                # Selected Reminder
-                pass
+                i = (rmy+self.reminderScrollOffset-80)//73
+                self.interacting = self.c.c()
+                self.temporaryInteracting = self.interacting
+                if (rmy - ((rmy+self.reminderScrollOffset-80)//73+1)*73) <= 22:
+                    self.stringKeyQueue = self.reminders[self.selectedRemindersList][i][0]
+                    self.ivos[self.interacting] = ["r", EditableTextBoxVisualObject(f"A{i}", (60, i*73+80-self.reminderScrollOffset), self.reminders[self.selectedRemindersList][i][0])]
+                else:
+                    self.stringKeyQueue = str(self.reminders[self.selectedRemindersList][i][1])
+                    self.ivos[self.interacting] = ["r", EditableTextBoxVisualObject(f"B{i}", (60, i*73+102-self.reminderScrollOffset), str(self.reminders[self.selectedRemindersList][i][1]), True)]
             elif rmy > len(self.reminders[self.selectedRemindersList])*73+80-self.reminderScrollOffset:
                 # New Reminder
                 self.reminders[self.selectedRemindersList].append(["New Reminder", time.time() + 86400])
