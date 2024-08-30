@@ -89,7 +89,7 @@ class Interface:
         else:
             if self.temporaryInteracting in self.ivos and self.interacting != self.temporaryInteracting:
                 if self.ivos[self.temporaryInteracting][1].name[0] == "A":
-                    self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1])][0] = self.ivos[self.temporaryInteracting][1].txt
+                    self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1:])][0] = self.ivos[self.temporaryInteracting][1].txt
                 if self.ivos[self.temporaryInteracting][1].name[0] == "B":
                     timestamp = self.ivos[self.temporaryInteracting][1].txt
                     try:
@@ -102,12 +102,18 @@ class Interface:
                         for char in timestamp:
                             if not(str(char) in "0123456789"): timestamp = timestamp.replace(str(char), " ")
                         while "  " in timestamp: timestamp = timestamp.replace("  ", " ")
-                        try: self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1])][1] = (int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M %S ")))+offset))
-                        except: self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1])][1] = (int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M ")))+offset))
+                        try: self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1:])][1] = (int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M %S ")))+offset))
+                        except: self.reminders[self.selectedRemindersList][int(self.ivos[self.temporaryInteracting][1].name[1:])][1] = (int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M ")))+offset))
                     except:
                         pass
+                if self.ivos[self.temporaryInteracting][1].name[0] == "C":
+                    editing = list(self.reminders.keys())[int(self.ivos[self.temporaryInteracting][1].name[1:])]
+                    temp = self.reminders[editing]
+                    self.reminders.pop(editing)
+                    self.reminders[self.ivos[self.temporaryInteracting][1].txt] = temp
+                    self.selectedRemindersList = self.ivos[self.temporaryInteracting][1].txt
                 self.ivos.pop(self.temporaryInteracting)
-                self.temporaryInteracting = -999      
+                self.temporaryInteracting = -999  
 
         '''Keyboard'''
         for key in keyQueue:
@@ -180,11 +186,14 @@ class Interface:
                         self.interacting = -997
             elif 640 < rmy:
                 i = (rmx+self.reminderTabScrollOffset-10)//100
-                if 0 <= i and i <= len(self.reminders.keys())-1:
+                if 0 <= i and i <= len(self.reminders.keys())-1 and list(self.reminders.keys())[i] != self.selectedRemindersList:
                     self.selectedRemindersList = list(self.reminders.keys())[i]
                     self.interacting = -997
-
-                
+                if list(self.reminders.keys())[i] == self.selectedRemindersList:
+                    self.interacting = self.c.c()
+                    self.temporaryInteracting = self.interacting
+                    self.stringKeyQueue = self.selectedRemindersList
+                    self.ivos[self.interacting] = ["r", EditableTextBoxVisualObject(f"C{i}", (i*100+10-self.reminderTabScrollOffset, 645), self.stringKeyQueue)]
 
 
         '''Interacting With...'''
@@ -256,8 +265,10 @@ class Interface:
             if i*73+60-self.reminderScrollOffset > 640:
                 break
             if i*73+60-self.reminderScrollOffset > 0:
-                placeOver(img, displayText(reminder[0], "m", colorTXT=(175,175,175,255) if reminder[2] else (0,0,0,255)), (60, i*73+80-self.reminderScrollOffset))
-                placeOver(img, displayText(FORMAT_TIME_FANCY(reminder[1]), "m", colorTXT=(175,175,175,255) if reminder[2] else ((150,150,150,255) if reminder[1] >= self.now else (255,100,100,255))), (60, i*73+102-self.reminderScrollOffset))
+                if not(self.ivos[self.temporaryInteracting][1].name[0] == "A" and str(i) == str(self.ivos[self.temporaryInteracting][1].name[1:])):
+                    placeOver(img, displayText(reminder[0], "m", colorTXT=(175,175,175,255) if reminder[2] else (0,0,0,255)), (60, i*73+80-self.reminderScrollOffset))
+                if not(self.ivos[self.temporaryInteracting][1].name[0] == "B" and str(i) == str(self.ivos[self.temporaryInteracting][1].name[1:])):
+                    placeOver(img, displayText(FORMAT_TIME_FANCY(reminder[1]), "m", colorTXT=(175,175,175,255) if reminder[2] else ((150,150,150,255) if reminder[1] >= self.now else (255,100,100,255))), (60, i*73+102-self.reminderScrollOffset))
                 if reminder[1] >= self.now and not(reminder[2]):
                     placeOver(img,CHECKLIST_NORMAL_ARRAY, (30, i*73+102-self.reminderScrollOffset), True)
                 elif reminder[1] <= self.now and not(reminder[2]):
@@ -277,10 +288,17 @@ class Interface:
         placeOver(img, generateColorBox((300,2), FRAME_COLOR_RGBA), (76,640))
         i=0
         for listname in list(self.reminders.keys()):
-            if i*100+10-self.reminderTabScrollOffset > 450:
+            shift = i*100+10-self.reminderTabScrollOffset
+            if shift > 450:
                 break
-            if i*100+10-self.reminderTabScrollOffset > 0:
-                placeOver(img, getRegion(displayText(listname, "m"), (0,0), (90,25)), (i*100+10-self.reminderTabScrollOffset,645))
+            if not(self.ivos[self.temporaryInteracting][1].name[0] == "C" and str(i) == str(self.ivos[self.temporaryInteracting][1].name[1:])):
+                if shift > -90:
+                    if shift < 0:
+                        placeOver(img, getRegion(displayText(listname, "m"), (abs(shift)+3,0), (90,25)), (3,645))
+                    elif shift > 360:
+                        placeOver(img, getRegion(displayText(listname, "m"), (0,0), (90-(shift-360+4),25)), (shift,645))
+                    else:
+                        placeOver(img, getRegion(displayText(listname, "m"), (0,0), (90,25)), (shift,645))
             i+=1
 
         for id in self.ivos:
@@ -328,6 +346,7 @@ class Interface:
         placeOver(img, displayText(f"length of IVO: {len(self.ivos)}", "m"), (20,90))
         placeOver(img, displayText(f"Mouse Pos: ({self.mx}, {self.my})", "m"), (200,20))
         placeOver(img, displayText(f"Mouse Press: {self.mPressed}", "m", colorTXT=(100,255,100,255) if self.mPressed else (255,100,100,255)), (200,55))
+        placeOver(img, displayText(f"Temp Interacting: {self.temporaryInteracting}", "m"), (200,90))
 
         for id in self.ivos:
             if self.ivos[id][0] == "t":
