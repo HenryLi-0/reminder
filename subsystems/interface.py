@@ -387,28 +387,28 @@ class Interface:
             temp = time.mktime(time.localtime(event[2]))
             temp = (temp - self.selectedCalendarDate*86400)/3600 + TIMEZONE_OFFSET
             y2 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
-            if (y1 <= 683) or (55 <= y2):
-                if y1 < 55:
+            if (y1 <= 683) or (50 <= y2):
+                if y1 < 50:
                     if y2 > 683:
                         # Larger than the calendar screen on both ends
-                        temp = generateColorBox((400, 628), event[3])
+                        temp = generateColorBox((400, 633), event[3])
                         placeOver(temp, displayText(event[0], "m"), (5,5))
                         placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
                         placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
-                        placeOver(img, temp, (37, 55))
+                        placeOver(img, temp, (37, 50))
                     else:
-                        # Top peeks into a previous day
-                        temp = generateColorBox((400, abs(round(y2-55))), event[3])
-                        if abs(y2-55) > 20:
+                        # Top peeks above screen
+                        temp = generateColorBox((400, round(y2-50)), event[3])
+                        if abs(y2-50) > 20:
                             placeOver(temp, displayText(event[0], "m"), (5,5))
-                        if abs(y2-55) > 38:
+                        if abs(y2-50) > 38:
                             placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
                             placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
                         placeOver(img, temp, (37, 55))
                 else:
                     if y2 > 683:
-                        # Bottom peeks into a future day
-                        temp = generateColorBox((400, abs(round(683-y1))), event[3])
+                        # Bottom peeks below screen
+                        temp = generateColorBox((400, round(683-y1)), event[3])
                         if abs(683-y1) > 20:
                             placeOver(temp, displayText(event[0], "m"), (5,5))
                         if abs(683-y1) > 38:
@@ -417,7 +417,7 @@ class Interface:
                         placeOver(img, temp, (37, y1))
                     else:
                         # Smaller than the calendar screen
-                        temp = generateColorBox((400, abs(round(y2-y1))), event[3])
+                        temp = generateColorBox((400, round(y2-y1)), event[3])
                         if abs(y2-y1) > 20:
                             placeOver(temp, displayText(event[0], "m"), (5,5))
                         if abs(y2-y1) > 38:
@@ -425,11 +425,11 @@ class Interface:
                             placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
                         placeOver(img, temp, (37, min(y1,y2)))
 
-        placeOver(img, generateColorBox((444,55), FILL_COLOR_RGBA), (3,3))
-        placeOver(img, generateColorBox((300,2), FRAME_COLOR_RGBA), (76,56))
+        placeOver(img, generateColorBox((444,50), FILL_COLOR_RGBA), (3,3))
+        placeOver(img, generateColorBox((300,2), FRAME_COLOR_RGBA), (76,51))
         placeOver(img, displayText(f"Calendar", "m"), (20,20))
 
-        
+
         for id in self.ivos:
             if self.ivos[id][0] == "c":
                 self.ivos[id][1].tick(img, self.interacting==id)
@@ -538,12 +538,43 @@ class Interface:
         rmx = self.mx - 942
         rmy = self.my - 356
 
-        placeOver(img, displayText(f"FPS: {self.fps}", "m"), (20,20))
-        placeOver(img, displayText(f"Interacting With: {self.interacting}", "m"), (20,55))
-        placeOver(img, displayText(f"length of IVO: {len(self.ivos)}", "m"), (20,90))
-        placeOver(img, displayText(f"Mouse Pos: ({self.mx}, {self.my})", "m"), (200,20))
-        placeOver(img, displayText(f"Mouse Press: {self.mPressed}", "m", colorTXT=(100,255,100,255) if self.mPressed else (255,100,100,255)), (200,55))
-        placeOver(img, displayText(f"Temp Interacting: {self.temporaryInteracting}", "m"), (200,90))
+        # placeOver(img, displayText(f"FPS: {self.fps}", "m"), (20,20))
+        # placeOver(img, displayText(f"Interacting With: {self.interacting}", "m"), (20,55))
+        # placeOver(img, displayText(f"length of IVO: {len(self.ivos)}", "m"), (20,90))
+        # placeOver(img, displayText(f"Mouse Pos: ({self.mx}, {self.my})", "m"), (200,20))
+        # placeOver(img, displayText(f"Mouse Press: {self.mPressed}", "m", colorTXT=(100,255,100,255) if self.mPressed else (255,100,100,255)), (200,55))
+        # placeOver(img, displayText(f"Temp Interacting: {self.temporaryInteracting}", "m"), (200,90))
+
+        placeOver(img, displayText(FORMAT_NOW("%m-%d-%Y"), "l"), (205,40), True)
+        placeOver(img, displayText(FORMAT_NOW("%I:%M:%S %p"), "l"), (205,75), True)
+
+        action = ""
+        for i in range(len(self.calendar)):
+            if (self.calendar[i][1] <= (self.now + TIMEZONE_OFFSET)) and ((self.now + TIMEZONE_OFFSET) <= self.calendar[i][2]):
+                action = i
+                break
+
+        if action != "":
+            passed = ((self.now + TIMEZONE_OFFSET) - self.calendar[i][1])/(self.calendar[i][2]-self.calendar[i][1])
+            placeOver(img, displayText(f"Event: {self.calendar[i][0]}", "m"), (205,260), True)
+            placeOver(img, generateColorBox((round(300*passed),30), (100,255,100,255)), (55,270))
+            placeOver(img, generateColorBox((round(300*(1-passed)),30), (255,100,100,255)), (55 + round(300*passed),270))
+        else:
+            action = ""
+            for i in range(len(self.calendar)):
+                if ((self.now + TIMEZONE_OFFSET) < self.calendar[i][1]):
+                    action = i
+                else:
+                    break
+            print(action)
+            placeOver(img, generateColorBox((300, 30), (100,100,100,255)), (55, 270))
+            if action != "":
+                placeOver(img, displayText(f"Next Event: {self.calendar[i][0]}", "m"), (205,260), True)
+                placeOver(img, displayText(f"???", "m"), (205,285), True)
+            else:
+                placeOver(img, displayText("No Future Events!", "m"), (205,260), True)
+            # placeOver(img, displayText())
+
 
         for id in self.ivos:
             if self.ivos[id][0] == "t":
