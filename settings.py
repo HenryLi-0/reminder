@@ -10,8 +10,9 @@ Here are the parts:
 '''
 
 '''Calculation'''
+import time
 FLOAT_ACCURACY = 3 # The number of digits after the decimal point things will generally round to
-
+TIMEZONE_OFFSET = -(time.altzone if time.localtime().tm_isdst else time.timezone) / 3600
 
 '''Visuals'''
 INTERFACE_FPS = 60 # The desired operating FPS

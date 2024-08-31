@@ -39,5 +39,25 @@ import time
 #     self.calendarOffset -= (self.calendarScale-calendarScalePrevious)*(self.mx-71)/25
 
 
-temp = time.localtime(time.time())
-print(temp.tm_mday + (8-temp.tm_wday))
+# temp = time.localtime(time.time())
+# print(temp.tm_mday + (8-temp.tm_wday))
+
+# def idk(id):
+#     now = time.localtime()
+#     yearNow = now.tm_year
+#     monthNow = now.tm_mon
+#     firstDayInMonth = time.mktime((yearNow, monthNow, 1, 0, 0, 0, 0, 0, -1))
+#     monthDay = 1 + (7*(id//7)) + (id%7-time.localtime(firstDayInMonth).tm_wday)
+#     if monthDay < 1: monthDay += 7
+#     date = (yearNow, monthNow, monthDay, 0, 0, 0, 0, 0, -1)
+#     epochSeconds = time.mktime(date)
+#     daysSinceEpoch = epochSeconds // (24 * 3600) - 1
+#     return daysSinceEpoch
+
+
+# print((time.mktime(temp) - time.mktime(time.gmtime(0)))//(86400))
+# print(f"Epoch day: {idk(34)}")
+
+# temp = time.mktime(time.localtime())
+# print(temp)
+# print(time.time())

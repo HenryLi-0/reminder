@@ -65,7 +65,7 @@ class Interface:
         }
         self.selectedRemindersList = list(self.reminders.keys())[0]
         self.calendar = [
-            ["test event", 1725074428, 1725078028]
+            ["test event", 1725117892, 1725121492]
         ]
         pass
 
@@ -261,9 +261,19 @@ class Interface:
                 elif len(self.reminders.keys())-1 < i:
                     self.reminders[f"New List {len(self.reminders.keys())}"] = [["New Reminder", (time.time()//86400)*86400 + 86400, False]]
         if self.mouseInDateSection and self.mRising and self.interacting == -999:
-            i = ((self.my-109)//40)*7+(self.mx-940)//55
-            if 0 <= i and i <= 34:
+            i = ((self.my-99)//35)*7+(self.mx-940)//55
+            if 0 <= i and i <= 41:
                 self.selectedCalendarIndex = i
+                now = time.localtime()
+                yearNow = now.tm_year
+                monthNow = now.tm_mon
+                firstDayInMonth = time.mktime((yearNow, monthNow, 1, 0, 0, 0, 0, 0, -1))
+                monthDay = 1 + (7*(i//7)) + (i%7-time.localtime(firstDayInMonth).tm_wday)
+                if monthDay < 1: monthDay += 7
+                date = (yearNow, monthNow, monthDay, 0, 0, 0, 0, 0, -1)
+                epochSeconds = time.mktime(date)
+                daysSinceEpoch = epochSeconds // (24 * 3600) - 1
+                self.selectedCalendarDate = daysSinceEpoch
                 self.scheduleSection("d")
 
         '''Interacting With...'''
@@ -310,11 +320,11 @@ class Interface:
         
 
         for event in self.calendar:
-            temp = time.localtime(event[1])
-            temp = (temp.tm_mday*86400 + temp.tm_hour*3600 + temp.tm_min*60 + temp.tm_sec - time.localtime(self.now).tm_mday*86400)/3600
+            temp = time.mktime(time.localtime(event[1]))
+            temp = (temp - self.selectedCalendarDate*86400)/3600 + TIMEZONE_OFFSET
             y1 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
-            temp = time.localtime(event[2])
-            temp = (temp.tm_mday*86400 + temp.tm_hour*3600 + temp.tm_min*60 + temp.tm_sec - time.localtime(self.now).tm_mday*86400)/3600
+            temp = time.mktime(time.localtime(event[2]))
+            temp = (temp - self.selectedCalendarDate*86400)/3600 + TIMEZONE_OFFSET
             y2 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
             if (55 <= y1 and y1 <= 683) or (55 <= y2 and y2 <= 683):
                 placeOver(img, generateColorBox((400, abs(round(y2-y1))), (255,127,100,255)), (37, min(y1,y2)))
@@ -414,16 +424,16 @@ class Interface:
 
 
         delta = -(7+int(FORMAT_NOW("%d"))-((int(FORMAT_NOW("%d"))-["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].index(FORMAT_NOW("%A"))))%7)*86400
-        days = [FORMAT_DELTA("%d", delta+i*86400) for i in range(35)]
-        months = [FORMAT_DELTA("%m", delta+i*86400) for i in range(35)]
+        days = [FORMAT_DELTA("%d", delta+i*86400) for i in range(42)]
+        months = [FORMAT_DELTA("%m", delta+i*86400) for i in range(42)]
         currentMonth = FORMAT_NOW("%m")
         currentDay = FORMAT_NOW("%d")
 
         for i in range(7):
             placeOver(img, displayText("SMTWTFS"[i], "m"), (i*55+25, 75))
 
-        for i in range(35):
-            placeOver(img, displayText(str(days[i]), "m", (200,200,255,255) if i == self.selectedCalendarIndex else (0,0,0,0), ((0,0,0,255) if days[i] == currentDay else (150,150,150,255)) if months[i] == currentMonth else (200,200,200,255)), (i%7*55+25, i//7*40+115))
+        for i in range(42):
+            placeOver(img, displayText(str(days[i]), "m", (200,200,255,255) if i == self.selectedCalendarIndex else (0,0,0,0), ((0,0,0,255) if days[i] == currentDay else (150,150,150,255)) if months[i] == currentMonth else (200,200,200,255)), (i%7*55+25, i//7*35+105))
 
         for id in self.ivos:
             if self.ivos[id][0] == "d":
