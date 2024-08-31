@@ -80,6 +80,7 @@ class Window:
     def windowStartupProcesses(self):
         '''window processes that occur once when startup'''
         print("windowStartupProcess")
+        self.labels["p"].hide()
         pass
     
     def getFPS(self): return self.fps

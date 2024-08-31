@@ -23,3 +23,14 @@ import time
 
 thing = str(123456)
 print(thing[1:])
+
+print(time.time())
+
+
+(621-self.calendarOffset)*25/(self.calendarScale+0.000001) + 47
+
+
+calendarScalePrevious = self.calendarScale
+self.calendarScale = 10**(math.log(self.timelineScale+0.000001,10) + self.mouseScroll/2500)-0.000001
+if abs(self.mouseScroll) > 0:
+    self.timelineOffset -= (self.timelineScale-calendarScalePrevious)*(self.mx-71)/25

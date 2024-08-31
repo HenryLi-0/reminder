@@ -48,6 +48,8 @@ KB_DEL_REMINDER = lambda keys: (len(keys) == 2) and ("Shift_L" in keys) and ("Ba
 KB_DEL_LIST     = lambda keys: (len(keys) == 3) and (  "Alt_L" in keys) and ("Shift_L" in keys) and ("BackSpace" in keys)   # Deletes the entire list
 KB_NEW_REMINDER = lambda keys: (len(keys) == 2) and (  "Alt_L" in keys) and ("N" in keys or "n" in keys)                    # Creates a new reminder
 KB_NEW_LIST     = lambda keys: (len(keys) == 2) and (  "Alt_L" in keys) and ("N" in keys or "n" in keys)                    # Creates a new list
+KB_ZOOM_IN      = lambda keys: (len(keys) == 2) and (  "Alt_L" in keys) and ( "plus" in keys)                               # Zooms In
+KB_ZOOM_OUT     = lambda keys: (len(keys) == 2) and (  "Alt_L" in keys) and ("minus" in keys)                               # Zooms Out
 
 
 '''Constants - DO NOT CHANGE!!!'''
@@ -128,6 +130,7 @@ POINT_SELECTED_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "poin
 CHECKLIST_NORMAL_ARRAY = generateOutlinedCircle(16, (230,230,230,255), FRAME_COLOR_RGBA)
 CHECKLIST_LATE_ARRAY = generateOutlinedCircle(16, (255,230,230,255), FRAME_COLOR_RGBA)
 CHECKLIST_COMPLETE_ARRAY = generateOutlinedCircle(16, (230,255,230,255), FRAME_COLOR_RGBA)
+CALANDER_BAR = generateColorBox((400,2), FRAME_COLOR_RGBA)
 
 # Icons
 ICON_CONSOLE_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "icon", "console.png"))

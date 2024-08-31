@@ -51,6 +51,9 @@ class Interface:
         '''Visuals'''
         self.reminderScrollOffset = 0
         self.reminderTabScrollOffset = 0
+        self.calendarOffset = 0
+        self.calendarScale = 1
+        
         '''Data'''
         self.now = time.time()
         self.reminders = {
@@ -58,6 +61,9 @@ class Interface:
             "test test": [["yippee",84546512, False],["huh  ",646546545, False]]
         }
         self.selectedRemindersList = list(self.reminders.keys())[0]
+        self.calendar = [
+            ["test event", 1725066189, 1725069789]
+        ]
         pass
 
     def mouseInSection(self, section):
@@ -168,7 +174,22 @@ class Interface:
                     self.keybindLastUpdate = time.time()
                     self.reminders[f"New List {len(self.reminders.keys())}"] = [["New Reminder", (time.time()//86400)*86400 + 86400, False]]
                     self.interacting = -997
-
+            if KB_ZOOM_IN(keyQueue):
+                '''ZOOM IN (CALENDAR): ALT + PLUS'''
+                self.keybindLastUpdate = time.time()
+                calendarScalePrevious = self.calendarScale
+                self.calendarScale = 10**(math.log(self.calendarScale+0.000001,10) - 500/2500)-0.000001
+                self.calendarScale = max(0.25, min(self.calendarScale, 1))
+                self.calendarOffset -= (self.calendarScale-calendarScalePrevious)*(self.my-50)/25
+                self.interacting = -997
+            if KB_ZOOM_OUT(keyQueue):
+                '''ZOOM OUT (CALENDAR): ALT + MINUS'''
+                self.keybindLastUpdate = time.time()
+                calendarScalePrevious = self.calendarScale
+                self.calendarScale = 10**(math.log(self.calendarScale+0.000001,10) + 500/2500)-0.000001
+                self.calendarScale = max(0.25, min(self.calendarScale, 1))
+                self.calendarOffset -= (self.calendarScale-calendarScalePrevious)*(self.my-50)/25
+                self.interacting = -997
 
 
         '''Mouse Scroll'''
@@ -186,6 +207,10 @@ class Interface:
                     elif 640 <= rmy:
                         self.reminderTabScrollOffset += self.mouseScroll/2
                         self.reminderTabScrollOffset = max(0, min(self.reminderTabScrollOffset, (len(self.reminders.keys())-1)*100))
+                if self.mouseInCalanderSection:
+                    rmx = self.mx - 14
+                    rmy = self.my - 14
+                    self.calendarOffset += self.mouseScroll/100
         else:
             if self.interacting == -996: self.interacting = -999
         pass
@@ -264,6 +289,15 @@ class Interface:
         img = im.copy()
         rmx = self.mx - 14
         rmy = self.my - 14
+        
+        
+        for i in range(25):
+            y = (i-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
+            if (i//12) % 2 == 0: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} AM", "s"), (20,y), True)
+            else: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} PM", "s"), (20,y), True)
+            placeOver(img, CALANDER_BAR, (37, y))
+
+        placeOver(img, displayText(f"Calendar", "m"), (20,20))
 
         
         for id in self.ivos:
