@@ -24,8 +24,8 @@ SHOW_CROSSHAIR = False # Shows a crosshair for the mouse's position
 hexColorToRGBA = lambda hexcolor: tuple(int(hexcolor[i:i+2], 16) for i in (1, 3, 5)) + (255,)
 
 BACKGROUND_COLOR = "#303030" #Background color
-FRAME_COLOR      = "#9b9b9b" #Borders and Frame color
-SELECTED_COLOR   = "#696969" #Selected Element color
+FRAME_COLOR      = "#696969" #Borders and Frame color
+SELECTED_COLOR   = "#9b9b9b" #Selected Element color
 FILL_COLOR       = "#eeeeee" #Fill color
 
 BACKGROUND_COLOR_RGBA = hexColorToRGBA(BACKGROUND_COLOR)

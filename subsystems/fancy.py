@@ -2,7 +2,7 @@
 
 from PIL import Image, ImageDraw
 import numpy
-from settings import FONT_SMALL, FONT_SMALL_MEDIUM, FONT_MEDIUM, FONT_LARGE, BACKGROUND_COLOR, SELECTED_COLOR, FRAME_COLOR, hexColorToRGBA
+from settings import FONT_SMALL, FONT_SMALL_MEDIUM, FONT_MEDIUM, FONT_LARGE, FILL_COLOR, SELECTED_COLOR, FRAME_COLOR, hexColorToRGBA
 from subsystems.simplefancy import *
 
 def displayText(text: str, size, colorBG:tuple|list = (0,0,0,0), colorTXT:tuple|list = (0,0,0,255), bold = False):
@@ -25,7 +25,7 @@ def displayText(text: str, size, colorBG:tuple|list = (0,0,0,0), colorTXT:tuple|
 def generateIcon(img, active = False, size = (29,29), color = ""):
     '''Generates an icon image given an image, active section, image size (no outline), and an optional overriding outline color'''
     from subsystems.visuals import placeOver
-    icon = generateColorBox((size[0]+6,size[1]+6),hexColorToRGBA(BACKGROUND_COLOR))
+    icon = generateColorBox((size[0]+6,size[1]+6),hexColorToRGBA(FILL_COLOR))
     if color == "": placeOver(icon, generateBorderBox(size,3, hexColorToRGBA(SELECTED_COLOR if active else FRAME_COLOR)), (0,0))
     else: placeOver(icon, generateBorderBox(size,3, hexColorToRGBA(color)), (0,0))
     placeOver(icon, img, (3,3))

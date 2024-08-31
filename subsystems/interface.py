@@ -38,6 +38,9 @@ class Interface:
             -99 : ["p", EditableTextBoxVisualObject( "Name", (10,10), "")],
             -98 : ["p", EditableTextBoxVisualObject("Start", (10,50), "")],
             -97 : ["p", EditableTextBoxVisualObject(  "End", (10,90), "")],
+            -96 : ["p", TextButtonPushVisualObject( "Save", "Save", (10,150), 3)],
+            -95 : ["p", TextButtonPushVisualObject("Cancel", "Cancel", (150,150), 3)],
+            -94 : ["p", DummyVisualObject("editing", (0,0))],
         }
         '''Control'''
         self.interacting = -999
@@ -292,9 +295,42 @@ class Interface:
                     self.ivos[-99][1].updateText(self.calendar[i][0])
                     self.ivos[-98][1].updateText(FORMAT_TIME_FANCY(self.calendar[i][1]))
                     self.ivos[-97][1].updateText(FORMAT_TIME_FANCY(self.calendar[i][2]))
+                    self.ivos[-94][1].data = i
                 if action == "":
                     temp = round(temp/900)*900
                     self.calendar.append(["New Event", temp, temp+3600, generatePastelLight()])
+
+        '''Editing Events'''
+        if self.interacting == -96:
+            i = int(self.ivos[-94][1].data)
+            result = []
+            for timestamp in [self.ivos[-98][1].txt, self.ivos[-97][1].txt]:
+                try:
+                    offset = 0
+                    for test in ["am", "AM", "aM", "Am", "pm", "PM", "pM", "Pm"]:
+                        if test in timestamp: break
+                    if test in ["am", "AM", "aM", "Am"]: offset = 0
+                    if test in ["pm", "PM", "pM", "Pm"]: offset = 43200
+                    timestamp += " "
+                    for char in timestamp:
+                        if not(str(char) in "0123456789"): timestamp = timestamp.replace(str(char), " ")
+                    while "  " in timestamp: timestamp = timestamp.replace("  ", " ")
+                    try:
+                        result.append(int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M %S ")))+offset))
+                    except:
+                        result.append(int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M ")))+offset))
+                except:
+                    pass
+            if len(result) == 2:
+                if result[0] != result[1]:
+                    self.calendar[i][0] = self.ivos[-99][1].txt
+                    self.calendar[i][1] = min(result[0], result[1])
+                    self.calendar[i][2] = max(result[0], result[1])
+
+            self.editingEvent = False
+        if self.interacting == -95:
+            self.editingEvent = False
+
 
         '''Interacting With...'''
         self.previousInteracting = self.interacting
@@ -337,7 +373,6 @@ class Interface:
         img = im.copy()
         rmx = self.mx - 14
         rmy = self.my - 14
-        
 
         for i in range(25):
             y = (i-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
@@ -352,15 +387,46 @@ class Interface:
             temp = time.mktime(time.localtime(event[2]))
             temp = (temp - self.selectedCalendarDate*86400)/3600 + TIMEZONE_OFFSET
             y2 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
-            if (55 <= y1 and y1 <= 683) or (55 <= y2 and y2 <= 683):
-                temp = generateColorBox((400, abs(round(y2-y1))), event[3])
-                if abs(y2-y1) > 20:
-                    placeOver(temp, displayText(event[0], "m"), (5,5))
-                if abs(y2-y1) > 38:
-                    placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
-                    placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
-                placeOver(img, temp, (37, min(y1,y2)))
+            if (y1 <= 683) or (55 <= y2):
+                if y1 < 55:
+                    if y2 > 683:
+                        # Larger than the calendar screen on both ends
+                        temp = generateColorBox((400, 628), event[3])
+                        placeOver(temp, displayText(event[0], "m"), (5,5))
+                        placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
+                        placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
+                        placeOver(img, temp, (37, 55))
+                    else:
+                        # Top peeks into a previous day
+                        temp = generateColorBox((400, abs(round(y2-55))), event[3])
+                        if abs(y2-55) > 20:
+                            placeOver(temp, displayText(event[0], "m"), (5,5))
+                        if abs(y2-55) > 38:
+                            placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
+                            placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
+                        placeOver(img, temp, (37, 55))
+                else:
+                    if y2 > 683:
+                        # Bottom peeks into a future day
+                        temp = generateColorBox((400, abs(round(683-y1))), event[3])
+                        if abs(683-y1) > 20:
+                            placeOver(temp, displayText(event[0], "m"), (5,5))
+                        if abs(683-y1) > 38:
+                            placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
+                            placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
+                        placeOver(img, temp, (37, y1))
+                    else:
+                        # Smaller than the calendar screen
+                        temp = generateColorBox((400, abs(round(y2-y1))), event[3])
+                        if abs(y2-y1) > 20:
+                            placeOver(temp, displayText(event[0], "m"), (5,5))
+                        if abs(y2-y1) > 38:
+                            placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
+                            placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
+                        placeOver(img, temp, (37, min(y1,y2)))
 
+        placeOver(img, generateColorBox((444,55), FILL_COLOR_RGBA), (3,3))
+        placeOver(img, generateColorBox((300,2), FRAME_COLOR_RGBA), (76,56))
         placeOver(img, displayText(f"Calendar", "m"), (20,20))
 
         
