@@ -40,8 +40,8 @@ def generateInwardsBorderBox(size:list|tuple = (25,25), outlineW:int = 1, color:
 def generatePastelDark():
     '''Randomly generates a dark pastel color'''
     color = [100]
-    color.insert(random.randrange(0,len(color)), random.randrange(100,200))
-    color.insert(random.randrange(0,len(color)), random.randrange(100,200))
+    color.insert(random.randrange(0,len(color)+1), random.randrange(100,200))
+    color.insert(random.randrange(0,len(color)+1), random.randrange(100,200))
     color.append(255)
     return color
 
@@ -52,6 +52,15 @@ def translatePastelLight(color):
     colorC[2] = 0.9
     colorC = colorsys.hsv_to_rgb(colorC[0],colorC[1],colorC[2])
     return [round(colorC[0]*255), round(colorC[1]*255), round(colorC[2]*255), color[3]]
+
+def generatePastelLight():
+    '''Randomly generate a light pastel color'''
+    color = []
+    color.insert(random.randrange(0,len(color)+1), random.randrange(150,200))
+    color.insert(random.randrange(0,len(color)+1), random.randrange(175,225))
+    color.insert(random.randrange(0,len(color)+1), random.randrange(200,250))
+    color.append(255)
+    return color
 
 def genereateThemedBorderRectangleInstructions(size:list|tuple = (25,25),borderColor:list|tuple = (255,255,255,255)):
     instructions = []

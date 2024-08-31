@@ -57,6 +57,11 @@ class Window:
         self.interface.tick(mx,my,self.mPressed, self.fps, self.keysPressed, self.mouseScroll)
         self.mouseScroll = 0
         
+        if self.interface.editingEvent:
+            self.labels["p"].show()
+        else:
+            self.labels["p"].hide()
+        
         for region in self.interface.updateSection:
             if self.labels[region].shown:
                 self.labels[region].update(arrayToImage(self.processFunctions[region](self.blankLabels[region])))
@@ -87,7 +92,6 @@ class Window:
     def windowStartupProcesses(self):
         '''window processes that occur once when startup'''
         print("windowStartupProcess")
-        self.labels["p"].hide()
         pass
     
     def getFPS(self): return self.fps

@@ -35,6 +35,9 @@ class Interface:
             -997 : [" ", DummyVisualObject("dummy", (0,0))], # used by keybinds
             -996 : [" ", DummyVisualObject("dummy", (0,0))], # used by scrolling
 
+            -99 : ["p", EditableTextBoxVisualObject( "Name", (10,10), "")],
+            -98 : ["p", EditableTextBoxVisualObject("Start", (10,50), "")],
+            -97 : ["p", EditableTextBoxVisualObject(  "End", (10,90), "")],
         }
         '''Control'''
         self.interacting = -999
@@ -57,6 +60,7 @@ class Interface:
         temp = time.localtime(time.time())
         self.selectedCalendarIndex = temp.tm_mday + (8-temp.tm_wday)
         self.selectedCalendarDate = (time.mktime(temp) - time.mktime(time.gmtime(0)))//(86400)
+        self.editingEvent = False
         '''Data'''
         self.now = time.time()
         self.reminders = {
@@ -65,7 +69,7 @@ class Interface:
         }
         self.selectedRemindersList = list(self.reminders.keys())[0]
         self.calendar = [
-            ["test event", 1725075043, 1725082243]
+            ["test event", 1725075043, 1725082243, generatePastelLight()]
         ]
         pass
 
@@ -276,9 +280,21 @@ class Interface:
                 self.selectedCalendarDate = daysSinceEpoch
                 self.scheduleSection("d")
         if self.mouseInCalanderSection and self.mRising and self.interacting == -999:
-            temp = ((self.my-14-50)*(self.calendarScale)/25+self.calendarOffset-TIMEZONE_OFFSET)*3600+self.selectedCalendarDate*86400
-            temp = round(temp/900)*900
-            self.calendar.append(["New Event", temp, temp+3600])
+            if not(self.editingEvent):
+                temp = ((self.my-14-50)*(self.calendarScale)/25+self.calendarOffset-TIMEZONE_OFFSET)*3600+self.selectedCalendarDate*86400
+                action = ""
+                for i in range(len(self.calendar)):
+                    if self.calendar[i][1] <= temp and temp <= self.calendar[i][2]:
+                        action = i
+                        break
+                if action != "":
+                    self.editingEvent = True
+                    self.ivos[-99][1].updateText(self.calendar[i][0])
+                    self.ivos[-98][1].updateText(FORMAT_TIME_FANCY(self.calendar[i][1]))
+                    self.ivos[-97][1].updateText(FORMAT_TIME_FANCY(self.calendar[i][2]))
+                if action == "":
+                    temp = round(temp/900)*900
+                    self.calendar.append(["New Event", temp, temp+3600, generatePastelLight()])
 
         '''Interacting With...'''
         self.previousInteracting = self.interacting
@@ -337,7 +353,7 @@ class Interface:
             temp = (temp - self.selectedCalendarDate*86400)/3600 + TIMEZONE_OFFSET
             y2 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
             if (55 <= y1 and y1 <= 683) or (55 <= y2 and y2 <= 683):
-                temp = generateColorBox((400, abs(round(y2-y1))), (255,127,100,255))
+                temp = generateColorBox((400, abs(round(y2-y1))), event[3])
                 if abs(y2-y1) > 20:
                     placeOver(temp, displayText(event[0], "m"), (5,5))
                 if abs(y2-y1) > 38:

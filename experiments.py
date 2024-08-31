@@ -65,3 +65,14 @@ import time
 print(time.time()-11*3600-44*60-30*60)
 
 print(round((3599)/900)*900)
+
+from subsystems.simplefancy import generatePastelLight
+
+a,b,c,d = [0,0,0,0]
+for i in range(1000):
+    temp = generatePastelLight()
+    a+=temp[0]
+    b+=temp[1]
+    c+=temp[2]
+    d+=temp[3]
+print([a/1000,b/1000,c/1000,d/1000])
