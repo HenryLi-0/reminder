@@ -62,7 +62,7 @@ class Interface:
         }
         self.selectedRemindersList = list(self.reminders.keys())[0]
         self.calendar = [
-            ["test event", 1725066189, 1725069789]
+            ["test event", 1725074428, 1725078028]
         ]
         pass
 
@@ -215,6 +215,8 @@ class Interface:
             if self.interacting == -996: self.interacting = -999
         pass
 
+        self.calendarOffset = max(-0.25, min(self.calendarOffset,-((670-50)*(self.calendarScale+0.000001)/25-25)))
+
         '''Mouse Pressed Activations'''
         if self.mouseInReminderSection and self.mRising and self.interacting == -999:
             rmx = self.mx - 478
@@ -290,12 +292,24 @@ class Interface:
         rmx = self.mx - 14
         rmy = self.my - 14
         
-        
+
+        for event in self.calendar:
+            temp = time.localtime(event[1])
+            temp = (temp.tm_mday*86400 + temp.tm_hour*3600 + temp.tm_min*60 + temp.tm_sec - time.localtime(self.now).tm_mday*86400)/3600
+            y1 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
+            temp = time.localtime(event[2])
+            temp = (temp.tm_mday*86400 + temp.tm_hour*3600 + temp.tm_min*60 + temp.tm_sec - time.localtime(self.now).tm_mday*86400)/3600
+            y2 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
+            print(y1, y2)
+            if (55 <= y1 and y1 <= 683) or (55 <= y2 and y2 <= 683):
+                placeOver(img, generateColorBox((400, abs(round(y2-y1))), (255,127,100,255)), (37, min(y1,y2)))
+
         for i in range(25):
             y = (i-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
             if (i//12) % 2 == 0: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} AM", "s"), (20,y), True)
             else: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} PM", "s"), (20,y), True)
             placeOver(img, CALANDER_BAR, (37, y))
+
 
         placeOver(img, displayText(f"Calendar", "m"), (20,20))
 

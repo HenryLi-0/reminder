@@ -21,16 +21,19 @@ import time
 # try: print(int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M %S ")))+offset))
 # except: print(int(round(time.mktime(time.strptime(timestamp, "%m %d %Y %I %M ")))+offset))
 
-thing = str(123456)
-print(thing[1:])
+# thing = str(123456)
+# print(thing[1:])
+
+x = time.time()
+x = time.localtime(x)
+x = x.tm_mday*86400 + x.tm_hour*3600 + x.tm_min*60 + x.tm_sec
+print(x)
 
 print(time.time())
+# (621-self.calendarOffset)*25/(self.calendarScale+0.000001) + 47
 
 
-(621-self.calendarOffset)*25/(self.calendarScale+0.000001) + 47
-
-
-calendarScalePrevious = self.calendarScale
-self.calendarScale = 10**(math.log(self.timelineScale+0.000001,10) + self.mouseScroll/2500)-0.000001
-if abs(self.mouseScroll) > 0:
-    self.timelineOffset -= (self.timelineScale-calendarScalePrevious)*(self.mx-71)/25
+# calendarScalePrevious = self.calendarScale
+# self.calendarScale = 10**(math.log(self.calendarScale+0.000001,10) + self.mouseScroll/2500)-0.000001
+# if abs(self.mouseScroll) > 0:
+#     self.calendarOffset -= (self.calendarScale-calendarScalePrevious)*(self.mx-71)/25
