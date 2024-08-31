@@ -24,12 +24,12 @@ import time
 # thing = str(123456)
 # print(thing[1:])
 
-x = time.time()
-x = time.localtime(x)
-x = x.tm_mday*86400 + x.tm_hour*3600 + x.tm_min*60 + x.tm_sec
-print(x)
+# x = time.time()
+# x = time.localtime(x)
+# x = x.tm_mday*86400 + x.tm_hour*3600 + x.tm_min*60 + x.tm_sec
+# print(x)
 
-print(time.time())
+# print(time.time())
 # (621-self.calendarOffset)*25/(self.calendarScale+0.000001) + 47
 
 
@@ -37,3 +37,7 @@ print(time.time())
 # self.calendarScale = 10**(math.log(self.calendarScale+0.000001,10) + self.mouseScroll/2500)-0.000001
 # if abs(self.mouseScroll) > 0:
 #     self.calendarOffset -= (self.calendarScale-calendarScalePrevious)*(self.mx-71)/25
+
+
+temp = time.localtime(time.time())
+print(temp.tm_mday + (8-temp.tm_wday))

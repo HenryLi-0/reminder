@@ -45,6 +45,7 @@ class Interface:
         self.mouseScroll = 0 
         self.consoleAlerts = []
         self.keybindLastUpdate = time.time()
+        self.updateSection = []
         '''Sliders'''
         self.sliders = []
         self.slidersData = []
@@ -53,7 +54,9 @@ class Interface:
         self.reminderTabScrollOffset = 0
         self.calendarOffset = 0
         self.calendarScale = 1
-        
+        temp = time.localtime(time.time())
+        self.selectedCalendarIndex = temp.tm_mday + (8-temp.tm_wday)
+        self.selectedCalendarDate = (time.mktime(temp) - time.mktime(time.gmtime(0)))//(86400)
         '''Data'''
         self.now = time.time()
         self.reminders = {
@@ -199,6 +202,7 @@ class Interface:
             if self.interacting == -996:
                 '''Scrolling!'''
                 if self.mouseInReminderSection:
+                    self.scheduleSection("r")
                     rmx = self.mx - 478
                     rmy = self.my - 14
                     if 58 < rmy and rmy < 640:
@@ -219,6 +223,7 @@ class Interface:
 
         '''Mouse Pressed Activations'''
         if self.mouseInReminderSection and self.mRising and self.interacting == -999:
+            self.scheduleSection("r")
             rmx = self.mx - 478
             rmy = self.my - 14
             if 58 <= rmy and rmy <= 640:
@@ -255,6 +260,11 @@ class Interface:
                         self.ivos[self.interacting] = ["r", EditableTextBoxVisualObject(f"C{i}", (i*100+10-self.reminderTabScrollOffset, 645), self.stringKeyQueue)]
                 elif len(self.reminders.keys())-1 < i:
                     self.reminders[f"New List {len(self.reminders.keys())}"] = [["New Reminder", (time.time()//86400)*86400 + 86400, False]]
+        if self.mouseInDateSection and self.mRising and self.interacting == -999:
+            i = ((self.my-109)//40)*7+(self.mx-940)//55
+            if 0 <= i and i <= 34:
+                self.selectedCalendarIndex = i
+                self.scheduleSection("d")
 
         '''Interacting With...'''
         self.previousInteracting = self.interacting
@@ -286,6 +296,12 @@ class Interface:
                 else:
                     self.ivos[self.previousInteracting][1].updateText(self.stringKeyQueue)
 
+        if self.temporaryInteracting != -999:
+            self.scheduleSection(self.ivos[self.temporaryInteracting][0])
+        self.scheduleSection("c")
+        self.scheduleSection("p")
+        self.scheduleSection("t")
+
     def processCalander(self, im):
         '''Calander Area: `(  14,  14) to ( 463, 683)` : size `( 450, 670)`'''
         img = im.copy()
@@ -300,7 +316,6 @@ class Interface:
             temp = time.localtime(event[2])
             temp = (temp.tm_mday*86400 + temp.tm_hour*3600 + temp.tm_min*60 + temp.tm_sec - time.localtime(self.now).tm_mday*86400)/3600
             y2 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
-            print(y1, y2)
             if (55 <= y1 and y1 <= 683) or (55 <= y2 and y2 <= 683):
                 placeOver(img, generateColorBox((400, abs(round(y2-y1))), (255,127,100,255)), (37, min(y1,y2)))
 
@@ -408,7 +423,7 @@ class Interface:
             placeOver(img, displayText("SMTWTFS"[i], "m"), (i*55+25, 75))
 
         for i in range(35):
-            placeOver(img, displayText(str(days[i]), "m", colorTXT=((0,0,0,255) if days[i] == currentDay else (150,150,150,255)) if months[i] == currentMonth else (200,200,200,255)), (i%7*55+25, i//7*40+115))
+            placeOver(img, displayText(str(days[i]), "m", (200,200,255,255) if i == self.selectedCalendarIndex else (0,0,0,0), ((0,0,0,255) if days[i] == currentDay else (150,150,150,255)) if months[i] == currentMonth else (200,200,200,255)), (i%7*55+25, i//7*40+115))
 
         for id in self.ivos:
             if self.ivos[id][0] == "d":
@@ -434,6 +449,11 @@ class Interface:
                 self.ivos[id][1].tick(img, self.interacting==id)
 
         return img    
+
+
+    def scheduleSection(self, section):
+        if not(section in self.updateSection):
+            self.updateSection.append(section)
 
     def saveState(self):
         pass

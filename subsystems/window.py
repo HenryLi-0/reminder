@@ -41,7 +41,7 @@ class Window:
             "c" : self.interface.processCalander,
             "p" : self.interface.processPopup   ,
             "r" : self.interface.processReminder,
-            # "d" : self.interface.processDate    ,
+            "d" : self.interface.processDate    ,
             "t" : self.interface.processTimer   ,
         }
         self.processFunctionsRegions = list(self.processFunctions.keys())
@@ -57,9 +57,10 @@ class Window:
         self.interface.tick(mx,my,self.mPressed, self.fps, self.keysPressed, self.mouseScroll)
         self.mouseScroll = 0
         
-        for region in self.processFunctionsRegions:
+        for region in self.interface.updateSection:
             if self.labels[region].shown:
                 self.labels[region].update(arrayToImage(self.processFunctions[region](self.blankLabels[region])))
+                self.interface.updateSection.remove(region)
 
         now = time.time()
         self.fpsTimestamps.append(now)
@@ -72,9 +73,15 @@ class Window:
     def windowOccasionalProcesses(self):
         '''window processes that happen less frequently (once every 5 seconds)'''
         print("windowOccaionalProcess")
+
+        for region in self.processFunctionsRegions:
+            if self.labels[region].shown:
+                self.labels[region].update(arrayToImage(self.processFunctions[region](self.blankLabels[region])))
+            if region in self.interface.updateSection:
+                self.interface.updateSection.remove(region)
+
         self.window.title(f"Reminders")
         print(self.getFPS())
-        self.labels["d"].update(arrayToImage(self.interface.processDate(self.blankLabels["d"])))
         self.window.after(OCCASIONAL_TICK_MS, self.windowOccasionalProcesses)
 
     def windowStartupProcesses(self):
