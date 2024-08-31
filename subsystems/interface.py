@@ -65,7 +65,7 @@ class Interface:
         }
         self.selectedRemindersList = list(self.reminders.keys())[0]
         self.calendar = [
-            ["test event", 1725117892, 1725121492]
+            ["test event", 1725075043, 1725082243]
         ]
         pass
 
@@ -275,6 +275,10 @@ class Interface:
                 daysSinceEpoch = epochSeconds // (24 * 3600) - 1
                 self.selectedCalendarDate = daysSinceEpoch
                 self.scheduleSection("d")
+        if self.mouseInCalanderSection and self.mRising and self.interacting == -999:
+            temp = ((self.my-14-50)*(self.calendarScale)/25+self.calendarOffset-TIMEZONE_OFFSET)*3600+self.selectedCalendarDate*86400
+            temp = round(temp/900)*900
+            self.calendar.append(["New Event", temp, temp+3600])
 
         '''Interacting With...'''
         self.previousInteracting = self.interacting
@@ -319,6 +323,12 @@ class Interface:
         rmy = self.my - 14
         
 
+        for i in range(25):
+            y = (i-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
+            if (i//12) % 2 == 0: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} AM", "s"), (20,y), True)
+            else: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} PM", "s"), (20,y), True)
+            placeOver(img, CALANDER_BAR, (37, y))
+
         for event in self.calendar:
             temp = time.mktime(time.localtime(event[1]))
             temp = (temp - self.selectedCalendarDate*86400)/3600 + TIMEZONE_OFFSET
@@ -327,14 +337,13 @@ class Interface:
             temp = (temp - self.selectedCalendarDate*86400)/3600 + TIMEZONE_OFFSET
             y2 = (temp-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
             if (55 <= y1 and y1 <= 683) or (55 <= y2 and y2 <= 683):
-                placeOver(img, generateColorBox((400, abs(round(y2-y1))), (255,127,100,255)), (37, min(y1,y2)))
-
-        for i in range(25):
-            y = (i-self.calendarOffset)*25/(self.calendarScale+0.000001) + 50
-            if (i//12) % 2 == 0: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} AM", "s"), (20,y), True)
-            else: placeOver(img, displayText(f"{12 if i%12 == 0 else i%12} PM", "s"), (20,y), True)
-            placeOver(img, CALANDER_BAR, (37, y))
-
+                temp = generateColorBox((400, abs(round(y2-y1))), (255,127,100,255))
+                if abs(y2-y1) > 20:
+                    placeOver(temp, displayText(event[0], "m"), (5,5))
+                if abs(y2-y1) > 38:
+                    placeOver(temp, displayText(FORMAT_TIME_FANCY(event[1]), "sm"), (5,25))
+                    placeOver(temp, displayText(FORMAT_TIME_FANCY(event[2]), "sm"), (200,25))
+                placeOver(img, temp, (37, min(y1,y2)))
 
         placeOver(img, displayText(f"Calendar", "m"), (20,20))
 

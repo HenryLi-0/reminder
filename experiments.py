@@ -61,3 +61,7 @@ import time
 # temp = time.mktime(time.localtime())
 # print(temp)
 # print(time.time())
+
+print(time.time()-11*3600-44*60-30*60)
+
+print(round((3599)/900)*900)
