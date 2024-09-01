@@ -67,6 +67,7 @@ class Interface:
         self.selectedCalendarIndex = temp.tm_mday + (8-temp.tm_wday)
         self.selectedCalendarDate = (time.mktime(temp) - time.mktime(time.gmtime(0)))//(86400)
         self.editingEvent = False
+        self.lastTimerUpdate = -999
         '''Data'''
         self.now = time.time()
         self.reminders = {
@@ -162,6 +163,7 @@ class Interface:
                         i = ((self.my-14)+self.reminderScrollOffset-80)//73
                         if 0 <= i and i <= len(self.reminders[self.selectedRemindersList])-1:
                             self.keybindLastUpdate = time.time()
+                            self.scheduleSection("r")
                             self.reminders[self.selectedRemindersList].pop(i)
                             self.interacting = -997
             if KB_DEL_LIST(keyQueue):
@@ -171,6 +173,7 @@ class Interface:
                         i = ((self.mx-478)+self.reminderTabScrollOffset-10)//100
                         if 0 <= i and i <= len(self.reminders.keys())-1:
                             self.keybindLastUpdate = time.time()
+                            self.scheduleSection("r")
                             self.reminders.pop(list(self.reminders.keys())[i])
                             self.selectedRemindersList = list(self.reminders.keys())[i-1]
                             self.interacting = -997
@@ -178,17 +181,20 @@ class Interface:
                 '''CREATES A NEW REMINDER: ALT + N'''
                 if self.mouseInReminderSection and 55 < (self.my-14) and (self.my-14) < 640:
                     self.keybindLastUpdate = time.time()
+                    self.scheduleSection("r")
                     self.reminders[self.selectedRemindersList].append(["New Reminder", (time.time()//86400)*86400 + 86400, False])
                     self.interacting = -997
             if KB_NEW_LIST(keyQueue):
                 '''CREATES A NEW LIST: ALT + N'''
                 if 640 <= (self.my-14):
                     self.keybindLastUpdate = time.time()
+                    self.scheduleSection("r")
                     self.reminders[f"New List {len(self.reminders.keys())}"] = [["New Reminder", (time.time()//86400)*86400 + 86400, False]]
                     self.interacting = -997
             if KB_ZOOM_IN(keyQueue):
                 '''ZOOM IN (CALENDAR): ALT + PLUS'''
                 self.keybindLastUpdate = time.time()
+                self.scheduleSection("c")
                 calendarScalePrevious = self.calendarScale
                 self.calendarScale = 10**(math.log(self.calendarScale+0.000001,10) - 500/2500)-0.000001
                 self.calendarScale = max(0.25, min(self.calendarScale, 1))
@@ -197,6 +203,7 @@ class Interface:
             if KB_ZOOM_OUT(keyQueue):
                 '''ZOOM OUT (CALENDAR): ALT + MINUS'''
                 self.keybindLastUpdate = time.time()
+                self.scheduleSection("c")
                 calendarScalePrevious = self.calendarScale
                 self.calendarScale = 10**(math.log(self.calendarScale+0.000001,10) + 500/2500)-0.000001
                 self.calendarScale = max(0.25, min(self.calendarScale, 1))
@@ -223,6 +230,7 @@ class Interface:
                 if self.mouseInCalanderSection:
                     rmx = self.mx - 14
                     rmy = self.my - 14
+                    self.scheduleSection("c")
                     self.calendarOffset += self.mouseScroll/100
         else:
             if self.interacting == -996: self.interacting = -999
@@ -283,9 +291,11 @@ class Interface:
                 epochSeconds = time.mktime(date)
                 daysSinceEpoch = epochSeconds // (24 * 3600) - 1
                 self.selectedCalendarDate = daysSinceEpoch
+                self.scheduleSection("c")
                 self.scheduleSection("d")
         if self.mouseInCalanderSection and self.mRising and self.interacting == -999:
             if not(self.editingEvent):
+                self.scheduleSection("c")
                 temp = ((self.my-14-50)*(self.calendarScale)/25+self.calendarOffset-TIMEZONE_OFFSET)*3600+self.selectedCalendarDate*86400
                 action = ""
                 for i in range(len(self.calendar)):
@@ -293,6 +303,7 @@ class Interface:
                         action = i
                         break
                 if action != "":
+                    self.scheduleSection("p")
                     self.editingEvent = True
                     self.ivos[-99][1].updateText(self.calendar[i][0])
                     self.ivos[-98][1].updateText(FORMAT_TIME_FANCY(self.calendar[i][1]))
@@ -310,6 +321,8 @@ class Interface:
 
         '''Editing Events'''
         if self.interacting == -96:
+            self.scheduleSection("c")
+            self.scheduleSection("p")
             i = int(self.ivos[-94][1].data)
             result = []
             for timestamp in [self.ivos[-98][1].txt, self.ivos[-97][1].txt]:
@@ -372,9 +385,12 @@ class Interface:
 
         if self.temporaryInteracting != -999:
             self.scheduleSection(self.ivos[self.temporaryInteracting][0])
-        self.scheduleSection("c")
-        self.scheduleSection("p")
-        self.scheduleSection("t")
+        if not(self.interacting in SYS_IVOS):
+            self.scheduleSection(self.ivos[self.interacting][0])
+        if not(self.previousInteracting in SYS_IVOS):
+            self.scheduleSection(self.ivos[self.previousInteracting][0])
+        if abs(self.now - self.lastTimerUpdate) >= 0.1:
+            self.scheduleSection("t")
 
     def processCalander(self, im):
         '''Calander Area: `(  14,  14) to ( 463, 683)` : size `( 450, 670)`'''
@@ -545,6 +561,7 @@ class Interface:
         img = im.copy()
         rmx = self.mx - 942
         rmy = self.my - 356
+        self.lastTimerUpdate = time.time()
 
         # placeOver(img, displayText(f"FPS: {self.fps}", "m"), (20,20))
         # placeOver(img, displayText(f"Interacting With: {self.interacting}", "m"), (20,55))
@@ -594,6 +611,7 @@ class Interface:
         placeOver(img, rotateDeg(CLOCK_SECOND, round(s*6+90)), (205,167), True)
         placeOver(img, CLOCK_CENTER, (205,167), True)
 
+        placeOver(img, displayText(f"FPS: {self.fps}", "s"), (10,308))
 
         for id in self.ivos:
             if self.ivos[id][0] == "t":
