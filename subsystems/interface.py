@@ -550,31 +550,34 @@ class Interface:
 
         action = ""
         for i in range(len(self.calendar)):
-            if (self.calendar[i][1] <= (self.now + TIMEZONE_OFFSET)) and ((self.now + TIMEZONE_OFFSET) <= self.calendar[i][2]):
+            if (self.calendar[i][1] <= self.now) and (self.now <= self.calendar[i][2]):
                 action = i
                 break
 
         if action != "":
-            passed = ((self.now + TIMEZONE_OFFSET) - self.calendar[i][1])/(self.calendar[i][2]-self.calendar[i][1])
-            placeOver(img, displayText(f"Event: {self.calendar[i][0]}", "m"), (205,260), True)
-            placeOver(img, generateColorBox((round(300*passed),30), (100,255,100,255)), (55,270))
+            passed = (self.now - self.calendar[action][1])/(self.calendar[action][2]-self.calendar[action][1])
+            placeOver(img, displayText(f"Current Event: {self.calendar[action][0]}", "m"), (205,260), True)
+            placeOver(img, generateColorBox((round(300*passed),30), (175,175,175,255)), (55,270))
             placeOver(img, generateColorBox((round(300*(1-passed)),30), (255,100,100,255)), (55 + round(300*passed),270))
+            temp = math.ceil(self.calendar[action][2] - self.now)
+            placeOver(img, displayText(f"{FORMAT_TIME_DIFF(temp)}", "m"), (205,285), True)
         else:
             action = ""
             for i in range(len(self.calendar)):
-                if ((self.now + TIMEZONE_OFFSET) < self.calendar[i][1]):
-                    action = i
-                else:
+                action = i + 1
+                if (self.calendar[i][1] < self.now):
                     break
-            print(action)
-            placeOver(img, generateColorBox((300, 30), (100,100,100,255)), (55, 270))
+            if not(0 <= action and action <= len(self.calendar)-1) or (self.calendar[action][1] < self.now):
+                action = ""
+            placeOver(img, generateColorBox((300, 30), (175,175,175,255)), (55, 270))
             if action != "":
-                placeOver(img, displayText(f"Next Event: {self.calendar[i][0]}", "m"), (205,260), True)
-                placeOver(img, displayText(f"???", "m"), (205,285), True)
+                placeOver(img, displayText(f"Next Event: {self.calendar[action][0]}", "m"), (205,260), True)
+                temp = math.ceil(self.calendar[action][1] - self.now)
+                placeOver(img, displayText(f"{FORMAT_TIME_DIFF(temp)}", "m"), (205,285), True)
             else:
                 placeOver(img, displayText("No Future Events!", "m"), (205,260), True)
-            # placeOver(img, displayText())
 
+        placeOver(img, CLOCK, (205,167), True)
 
         for id in self.ivos:
             if self.ivos[id][0] == "t":

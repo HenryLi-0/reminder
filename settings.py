@@ -42,6 +42,7 @@ FORMAT_TIME = lambda x: time.strftime("%I:%M:%S %p %m/%d/%Y", time.localtime(x))
 FORMAT_NOW = lambda f: time.strftime(f, time.localtime(time.time()))
 FORMAT_DELTA = lambda f,t: time.strftime(f, time.localtime(time.time()+t))
 FORMAT_TIME_FANCY = lambda x: time.strftime("%m-%d-%Y - %I:%M:%S %p", time.localtime(x))
+FORMAT_TIME_DIFF = lambda s: f"{s//3600}:{(s%3600)//60:02}:{s%60:02}" if s >= 3600 else f"{s//60}:{s%60:02}"
 
 '''Keybinds'''
 KB_IGNORE       = ["Win_L"]                                                                                                 # Keys to ignore
@@ -132,6 +133,8 @@ CHECKLIST_NORMAL_ARRAY = generateOutlinedCircle(16, (230,230,230,255), FRAME_COL
 CHECKLIST_LATE_ARRAY = generateOutlinedCircle(16, (255,230,230,255), FRAME_COLOR_RGBA)
 CHECKLIST_COMPLETE_ARRAY = generateOutlinedCircle(16, (230,255,230,255), FRAME_COLOR_RGBA)
 CALANDER_BAR = generateColorBox((400,2), FRAME_COLOR_RGBA)
+CLOCK = generateOutlinedCircle(73, FILL_COLOR_RGBA, FRAME_COLOR_RGBA)
+
 
 # Icons
 ICON_CONSOLE_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "icon", "console.png"))

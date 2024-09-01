@@ -62,17 +62,28 @@ import time
 # print(temp)
 # print(time.time())
 
-print(time.time()-11*3600-44*60-30*60)
+# print(time.time()-11*3600-44*60-30*60)
 
-print(round((3599)/900)*900)
+# print(round((3599)/900)*900)
 
-from subsystems.simplefancy import generatePastelLight
+# from subsystems.simplefancy import generatePastelLight
 
-a,b,c,d = [0,0,0,0]
-for i in range(1000):
-    temp = generatePastelLight()
-    a+=temp[0]
-    b+=temp[1]
-    c+=temp[2]
-    d+=temp[3]
-print([a/1000,b/1000,c/1000,d/1000])
+# a,b,c,d = [0,0,0,0]
+# for i in range(1000):
+#     temp = generatePastelLight()
+#     a+=temp[0]
+#     b+=temp[1]
+#     c+=temp[2]
+#     d+=temp[3]
+# print([a/1000,b/1000,c/1000,d/1000])
+
+# FORMAT_TIME_DIFF = lambda s: f"{s//3600}:{(s%3600)//60:02}:{s%60:02}" if s >= 3600 else f"{s//60}:{s%60:02}"
+
+# while True:
+#     a = int(input(""))
+#     print(FORMAT_TIME_DIFF(a))
+
+
+from subsystems.simplefancy import generateHalfColorBox
+from PIL import Image
+Image.fromarray(generateHalfColorBox((500,30),(255,127,100,255))).show()

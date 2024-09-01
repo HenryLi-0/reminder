@@ -109,3 +109,9 @@ def generateOutlinedCircle(fullradius, innercolor, outercolor):
     temp = generateCircle(fullradius, outercolor)
     placeOver(temp, generateCircle(fullradius-3, innercolor), (3,3))
     return temp
+
+def generateHalfColorBox(size:list|tuple = (25,25),color:list|tuple = (255,255,255,255)):
+    '''Generates a box of (size) size with the right half (color) color'''
+    array = numpy.empty((max(0,size[1]), max(0,size[0]), 4), dtype=numpy.uint8)
+    array[:, max(0, round(size[0]/2)):] = color
+    return array
