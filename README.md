@@ -19,6 +19,8 @@ Ok, time to get started!
 
 ![](demo.png)
 
+You can find a video of it [here!](https://www.youtube.com/watch?v=wlv_ZfiJgvk)
+
 ### Getting Started:
 
 First, make sure you installed all the neccesary python modules! (Any modules that don't come with python are listened down below!) Next, either clone this repository, or get the latest release from the releases tab, and run [`main.py`](/main.py)! Check [`MANUAL.md`](/MANUAL.md) for some tips of how to use this, and check [`CODEGUIDE.md`](/CODEGUIDE.md) if you're interested in the code!
