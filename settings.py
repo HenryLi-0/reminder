@@ -62,7 +62,7 @@ import numpy
 from subsystems.simplefancy import *
 
 # Version
-VERSION = "v0.0.0"
+VERSION = "v1.0.0"
 SYS_IVOS = [-999,-998,-997,-996]
 
 # Sections
