@@ -1,3 +1,4 @@
+![](/reminder_banner.png)
 
 # reminder
 
@@ -5,9 +6,7 @@ because i forgot
 
 ## Note:
 
-Reminder is still under development and is a bit ambitiously aimed to be done in three days. Unfortunately, contributions are not being accepted until it has an actual ready release (i plan on changing a lot of code and do frequently get ideas at 1 AM) and is suitable for testing. However, don't hesitate to report any bugs!
-
-(Note: As of August 2024, it will likely be broken half the time and everything is currently a bit of a mess...)
+Reminder just had its first release! It's very likely that a random bug may show up, so please report any bugs or crashes in the issues tab!
 
 
 ## Goal:
@@ -15,6 +14,10 @@ Reminder is still under development and is a bit ambitiously aimed to be done in
 Issue: idk
 
 Ok, time to get started!
+
+## Images:
+
+![](demo.png)
 
 ### Getting Started:
 
