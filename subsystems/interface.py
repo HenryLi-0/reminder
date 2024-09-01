@@ -633,7 +633,7 @@ class Interface:
                 f.close()
             for listname in list(project[1].keys()):
                 if not(listname in self.reminders):
-                    self.reminders.append(project[1][listname])
+                    self.reminders[listname] = project[1][listname]
                 else:
                     reminders = project[1][listname]
                     for reminder in reminders:
