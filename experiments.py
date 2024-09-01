@@ -84,6 +84,8 @@ import time
 #     print(FORMAT_TIME_DIFF(a))
 
 
-from subsystems.simplefancy import generateHalfColorBox
-from PIL import Image
-Image.fromarray(generateHalfColorBox((500,30),(255,127,100,255))).show()
+# from subsystems.simplefancy import generateHalfColorBox
+# from PIL import Image
+# Image.fromarray(generateHalfColorBox((500,30),(255,127,100,255))).show()
+
+print(FORMAT_TIME_FANCY(1725163200))

@@ -180,7 +180,7 @@ class IconVisualObject:
         self.positionO = RectangularPositionalBox((self.img.shape[1],self.img.shape[0]), pos[0], pos[1])
     def tick(self, img, active):
         placeOver(img, self.img2 if active else self.img, self.positionO.getPosition(), False)
-        if active: placeOver(img, displayText(self.name, "s", (0,0,0,200)), self.positionO.getPosition(), False)
+        if active: placeOver(img, displayText(self.name, "s", (255,255,255,200)), self.positionO.getPosition(), False)
     def updatePos(self, rmx, rmy):
         pass
     def keepInFrame(self, minX, minY, maxX, maxY):

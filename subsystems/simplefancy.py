@@ -114,4 +114,5 @@ def generateHalfColorBox(size:list|tuple = (25,25),color:list|tuple = (255,255,2
     '''Generates a box of (size) size with the right half (color) color'''
     array = numpy.empty((max(0,size[1]), max(0,size[0]), 4), dtype=numpy.uint8)
     array[:, max(0, round(size[0]/2)):] = color
+    array[:, :max(0, round(size[0]/2))] = (0,0,0,0)
     return array

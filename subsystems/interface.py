@@ -41,6 +41,9 @@ class Interface:
             -96 : ["p", TextButtonPushVisualObject( "Save", "Save", (10,150), 3)],
             -95 : ["p", TextButtonPushVisualObject("Cancel", "Cancel", (150,150), 3)],
             -94 : ["p", DummyVisualObject("editing", (0,0))],
+
+            -89 : ["t", IconVisualObject("Import", (331, 9), ICON_IMPORT_ARRAY, (27,27))],
+            -88 : ["t", IconVisualObject("Export", (369, 9), ICON_EXPORT_ARRAY, (27,27))],
         }
         '''Control'''
         self.interacting = -999
@@ -67,12 +70,11 @@ class Interface:
         '''Data'''
         self.now = time.time()
         self.reminders = {
-            "Reminders": [["hmmmmm",65465465, False],["aaaaa",17179869184, False]],
-            "test test": [["yippee",84546512, False],["huh  ",646546545, False]]
+            "Reminders": [["New Reminder",1725163200, False]]
         }
         self.selectedRemindersList = list(self.reminders.keys())[0]
         self.calendar = [
-            ["test event", 1725075043, 1725082243, generatePastelLight()]
+            ["The Last Hack Club Arcade Hour", 1725159600, 1725163200, (255,255,127,255)]
         ]
         pass
 
@@ -299,6 +301,12 @@ class Interface:
                 if action == "":
                     temp = round(temp/900)*900
                     self.calendar.append(["New Event", temp, temp+3600, generatePastelLight()])
+        if self.interacting == -89 and mPressed < 3:
+            self.importData()
+            for char in "cprdt": self.scheduleSection(char)
+        if self.interacting == -88 and mPressed < 3:
+            self.exportData()
+            for char in "cprdt": self.scheduleSection(char)
 
         '''Editing Events'''
         if self.interacting == -96:
@@ -578,6 +586,14 @@ class Interface:
                 placeOver(img, displayText("No Future Events!", "m"), (205,260), True)
 
         placeOver(img, CLOCK, (205,167), True)
+        h = -int(FORMAT_NOW("%I"))
+        m = -int(FORMAT_NOW("%M"))
+        s = -(int(FORMAT_NOW("%S"))+time.time()%1)
+        placeOver(img, rotateDeg(CLOCK_HOUR, round((h+m/60+s/3600)*30+90)), (205,167), True)
+        placeOver(img, rotateDeg(CLOCK_MINUTE, round((m+s/60)*6+90)), (205,167), True)
+        placeOver(img, rotateDeg(CLOCK_SECOND, round(s*6+90)), (205,167), True)
+        placeOver(img, CLOCK_CENTER, (205,167), True)
+
 
         for id in self.ivos:
             if self.ivos[id][0] == "t":
@@ -585,10 +601,42 @@ class Interface:
 
         return img    
 
-
     def scheduleSection(self, section):
         if not(section in self.updateSection):
             self.updateSection.append(section)
+
+    def importData(self):
+        path = filedialog.askopenfilename(initialdir=PATH_SAVE_DEFAULT, defaultextension=".reminder", filetypes=[("Reminder", "*.reminder"), ("All files", "*.*")])
+        if path != "":
+            self.projectPath = path
+            with open(path, "r") as f:
+                file = f.read()
+                project = ast.literal_eval(file)
+                f.close()
+            for listname in list(project[1].keys()):
+                if not(listname in self.reminders):
+                    self.reminders.append(project[1][listname])
+                else:
+                    reminders = project[1][listname]
+                    for reminder in reminders:
+                        if not(reminder in self.reminders[listname]):
+                            self.reminders[listname].append(reminder)
+            for event in project[2]:
+                if not(event in self.calendar):
+                    self.calendar.append(event)
+
+    def exportData(self):
+        path = filedialog.asksaveasfilename(initialdir=PATH_SAVE_DEFAULT, defaultextension=".reminder", filetypes=[("Reminder", "*.reminder"), ("All files", "*.*")])
+        if path != "":
+            self.projectPath = path
+            self.projectLastSaved = round(time.time())
+            export = []
+            export.append(VERSION)
+            export.append(self.reminders)
+            export.append(self.calendar)
+            with open(path, "w") as f:
+                f.write(str(export))
+                f.close()
 
     def saveState(self):
         pass

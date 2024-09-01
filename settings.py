@@ -134,7 +134,13 @@ CHECKLIST_LATE_ARRAY = generateOutlinedCircle(16, (255,230,230,255), FRAME_COLOR
 CHECKLIST_COMPLETE_ARRAY = generateOutlinedCircle(16, (230,255,230,255), FRAME_COLOR_RGBA)
 CALANDER_BAR = generateColorBox((400,2), FRAME_COLOR_RGBA)
 CLOCK = generateOutlinedCircle(73, FILL_COLOR_RGBA, FRAME_COLOR_RGBA)
+CLOCK_HOUR   = generateHalfColorBox((70,3),FRAME_COLOR_RGBA)
+CLOCK_MINUTE = generateHalfColorBox((120,3),FRAME_COLOR_RGBA)
+CLOCK_SECOND = generateHalfColorBox((125,3),(255,127,10,255))
+CLOCK_CENTER = generateOutlinedCircle(5, FILL_COLOR_RGBA, FRAME_COLOR_RGBA)
 
 
 # Icons
 ICON_CONSOLE_ARRAY = getArrayImageRGBAFromPath(os.path.join("resources", "icon", "console.png"))
+ICON_IMPORT_ARRAY  = getArrayImageRGBAFromPath(os.path.join("resources", "icon",  "import.png"))
+ICON_EXPORT_ARRAY  = getArrayImageRGBAFromPath(os.path.join("resources", "icon",  "export.png"))
